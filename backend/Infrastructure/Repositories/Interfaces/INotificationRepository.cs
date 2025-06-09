@@ -1,8 +1,9 @@
 ﻿using System;
 
-public class Class1
+public interface INotificationRepository
 {
-	public Class1()
-	{
-	}
+    void AddNotification(string message);
+    void RemoveNotification(Guid notificationId);
+    void ClearNotifications();
 }
+
