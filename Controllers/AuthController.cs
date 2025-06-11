@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 
 using BloodDonationSupportSystem.DTOs;
-using BloodDonationSupportSystem.Models;
-using BloodDonationSupportSystem.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BloodDonationSupportSystem.Controllers
 {
@@ -22,47 +19,53 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterDTO dto)
         {
-            var user = _userService.Register(dto.Name, dto.Email, dto.Password, dto.Phone);
-            if (user == null)
+            try
             {
-                return BadRequest("Email đã tồn tại!");
-            }
+                var user = _userService.Register(dto.Name, dto.Email, dto.Password, dto.Phone);
 
-            return Ok(new
-            {
-                Message = "Đăng ký thành công 🎉",
-                User = new
+                return Ok(new
                 {
-                    user.UID,
-                    user.Name,
-                    user.Email,
-                    user.PhoneNumber,
-                    user.Role
-                }
-            });
+                    Message = "Đăng ký thành công 🎉",
+                    User = new
+                    {
+                        user.UID,
+                        user.Name,
+                        user.Email,
+                        user.PhoneNumber,
+                        user.Role
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDTO dto)
         {
-            var user = _userService.Login(dto.Email, dto.Password);
-            if (user == null)
+            try
             {
-                return Unauthorized("Sai email hoặc mật khẩu.");
-            }
+                var user = _userService.Login(dto.Email, dto.Password);
 
-            return Ok(new
-            {
-                Message = "Đăng nhập thành công ✅",
-                User = new
+                return Ok(new
                 {
-                    user.Id,
-                    user.Name,
-                    user.Email,
-                    user.Phone,
-                    user.Role
-                }
-            });
+                    Message = "Đăng nhập thành công ✅",
+                    User = new
+                    {
+                        user.UID,
+                        user.Name,
+                        user.Email,
+                        user.PhoneNumber,
+                        user.Role
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { Error = ex.Message });
+            }
         }
     }
 }

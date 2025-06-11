@@ -1,5 +1,5 @@
 ﻿using BloodDonationSupportSystem.Data;
-using BloodDonationSupportSystem.Model;
+using BloodDonationSupportSystem.Models;
 
 namespace BloodDonationSupportSystem.Services
 {
@@ -10,10 +10,10 @@ namespace BloodDonationSupportSystem.Services
         {
             _context = context;
         }
-        public User? Register(string name, string email, string password, int? phone)
+        public User Register(string name, string email, string password, int? phone)
         {
             if (_context.Users.Any(u => u.Email == email))
-                return null;
+                throw new Exception("Email đã tồn tại trong hệ thống!");
 
             var user = new User
             {
@@ -30,10 +30,13 @@ namespace BloodDonationSupportSystem.Services
         }
 
 
-        public User? Login(string email, string password)
+        public User Login(string email, string password)
         {
-            return _context.Users
-                .FirstOrDefault(u => u.Email == email && u.Password == password);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+            if (user == null)
+                throw new Exception("Sai email hoặc mật khẩu!");
+
+            return user;
         }
     }
 }

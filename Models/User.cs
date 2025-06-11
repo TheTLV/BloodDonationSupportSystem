@@ -1,16 +1,16 @@
-﻿namespace BloodDonationSupportSystem.Model
+﻿namespace BloodDonationSupportSystem.Models
 {
     public class User
     {
         
         public int UID { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public int? PhoneNumber { get; set; }
+        public required string Name { get; set; }
+        public required string Email { get; set; }
+        public required string Password { get; set; }
+        public int? PhoneNumber { get; set; } 
 
-        public string Role { get; set; } // e.g., "User", "Staff", "Admin"
-        
+        public int Role { get; set; } = 1;// e.g., "User", "Staff", "Admin"
+
 
     }
 }

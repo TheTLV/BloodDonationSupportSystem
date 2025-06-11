@@ -1,5 +1,6 @@
 
 using BloodDonationSupportSystem.Data;
+using BloodDonationSupportSystem.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BloodDonationSupportSystem
@@ -19,6 +20,7 @@ namespace BloodDonationSupportSystem
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddScoped<UserService>();
 
             var app = builder.Build();
 
