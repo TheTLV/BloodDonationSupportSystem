@@ -8,11 +8,14 @@ namespace BloodDonationSupportSystem.DTOs
         public required string Name { get; set; }
 
         [Required(ErrorMessage = "Email là bắt buộc")]
+        [EmailAddress(ErrorMessage = "Địa chỉ email không hợp lệ")]
         public required string Email { get; set; }
 
         [Required(ErrorMessage = "Phải nhập mật khẩu")]
+        [MinLength(8, ErrorMessage = "Mật khẩu phải có ít nhất 8 ký tự")]
         public required string Password { get; set; }
 
-        public int? Phone { get; set; }  // Không bắt buộc
+        [RegularExpression(@"^0\d{8,14}$", ErrorMessage = "Số điện thoại phải từ 9 đến 15 chữ số")]
+        public string? Phone { get; set; }  
     }
 }

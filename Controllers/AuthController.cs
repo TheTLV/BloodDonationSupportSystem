@@ -25,11 +25,11 @@ namespace BloodDonationSupportSystem.Controllers
 
                 return Ok(new
                 {
-                    Message = "Đăng ký thành công 🎉",
+                    Message = "Đăng ký thành công ",
                     User = new
                     {
-                        user.UID,
-                        user.Name,
+                        user.UserId,
+                        user.Fullname,
                         user.Email,
                         user.PhoneNumber,
                         user.Role
@@ -51,11 +51,11 @@ namespace BloodDonationSupportSystem.Controllers
 
                 return Ok(new
                 {
-                    Message = "Đăng nhập thành công ✅",
+                    Message = "Đăng nhập thành công ",
                     User = new
                     {
-                        user.UID,
-                        user.Name,
+                        user.UserId,
+                        user.Fullname,
                         user.Email,
                         user.PhoneNumber,
                         user.Role

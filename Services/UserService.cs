@@ -10,17 +10,24 @@ namespace BloodDonationSupportSystem.Services
         {
             _context = context;
         }
-        public User Register(string name, string email, string password, int? phone)
+        public User Register(string name, string email, string password, string? phone)
         {
             if (_context.Users.Any(u => u.Email == email))
                 throw new Exception("Email đã tồn tại trong hệ thống!");
 
+            if (!string.IsNullOrEmpty(phone) && _context.Users.Any(u => u.PhoneNumber == phone))
+            {
+                throw new Exception("Số điện thoại này đã được sử dụng");
+            }
+
+
             var user = new User
             {
-                Name = name,
+                Fullname = name,
                 Email = email,
                 Password = password,
-                PhoneNumber = phone
+                PhoneNumber = phone,
+                RId = 1
             };
 
             _context.Users.Add(user);
