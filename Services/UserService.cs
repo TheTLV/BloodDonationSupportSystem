@@ -1,9 +1,12 @@
 ﻿using BloodDonationSupportSystem.Data;
+using BloodDonationSupportSystem.DTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BloodDonationSupportSystem.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly AppDbContext _context;
         public UserService(AppDbContext context)
@@ -33,6 +36,7 @@ namespace BloodDonationSupportSystem.Services
             _context.Users.Add(user);
             _context.SaveChanges();
 
+
             return user;
         }
 
@@ -44,6 +48,54 @@ namespace BloodDonationSupportSystem.Services
                 throw new Exception("Sai email hoặc mật khẩu!");
 
             return user;
+        }
+
+        public async Task<List<UserViewDTO>> GetAllUsersAsync()
+        {
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Select(u => new UserViewDTO
+                {
+                    UserId = u.UserId,
+                    Fullname = u.Fullname,
+                    Email = u.Email,
+                    PhoneNumber = u.PhoneNumber,
+                    RoleName = u.Role!.RoleName
+                }).ToListAsync();
+
+            return users;
+        }
+
+        public async Task<bool> DeleteUserAsync(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return false;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<UserViewDTO> UpdateUserAsync(int id, UserUpdateDTO dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) throw new Exception("User not found");
+
+            user.Fullname = dto.Fullname;
+            user.Email = dto.Email;
+            user.PhoneNumber = dto.PhoneNumber;
+            user.RId = dto.RoleId;
+
+            await _context.SaveChangesAsync();
+
+            return new UserViewDTO
+            {
+                UserId = user.UserId,
+                Fullname = user.Fullname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                RoleName = (await _context.Roles.FindAsync(dto.RoleId))?.RoleName ?? "Unknown"
+            };
         }
     }
 }
