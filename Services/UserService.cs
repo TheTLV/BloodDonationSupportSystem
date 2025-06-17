@@ -43,12 +43,20 @@ namespace BloodDonationSupportSystem.Services
 
         public User Login(string email, string password)
         {
-            var user = _context.Users.FirstOrDefault(u => u.Email == email && u.Password == password);
+            var user = _context.Users
+                .Include(u => u.Role!) 
+                .FirstOrDefault(u => u.Email == email && u.Password == password);
+
             if (user == null)
                 throw new Exception("Sai email hoặc mật khẩu!");
 
+            if (user.Role == null)
+                throw new Exception("Role bị null nhaaa");
+
             return user;
         }
+
+
 
         public async Task<List<UserViewDTO>> GetAllUsersAsync()
         {
@@ -60,10 +68,37 @@ namespace BloodDonationSupportSystem.Services
                     Fullname = u.Fullname,
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
-                    RoleName = u.Role!.RoleName
+                    RoleName = u.Role!.RoleName!
                 }).ToListAsync();
 
             return users;
+        }
+
+        public async Task<UserDetailDTO?> GetUserDetailAsync(int id)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Profile)
+                .FirstOrDefaultAsync(u => u.UserId == id);
+
+            if (user == null) return null;
+
+            return new UserDetailDTO
+            {
+                UserId = user.UserId,
+                Fullname = user.Fullname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                RoleName = user.Role?.RoleName ?? "Unknown",
+
+                // Profile data
+                BloodGroup = user.Profile?.BloodGroup,
+                Address = user.Profile?.Address,
+                Gender = user.Profile?.Gender,
+                DateOfBirth = user.Profile?.DateOfBirth,
+                LastDonationDate = user.Profile?.LastDonationDate,
+                LastReceivedDate = user.Profile?.LastReceivedDate
+            };
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -97,5 +132,23 @@ namespace BloodDonationSupportSystem.Services
                 RoleName = (await _context.Roles.FindAsync(dto.RoleId))?.RoleName ?? "Unknown"
             };
         }
+
+        public void RequestBlood(BloodRequestDTO dto)
+        {
+            var request = new BloodRequest
+            {
+                UserId = dto.UserId,
+                BloodGroup = dto.BloodType,
+                Quantity = dto.Quantity,
+                RequestDate = dto.RequestDate
+            };
+
+            _context.Bloodrequests.Add(request);
+            _context.SaveChanges();
+        }
+
+
+
+
     }
 }

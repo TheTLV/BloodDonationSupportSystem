@@ -19,7 +19,7 @@ public partial class User
 
     public virtual ICollection<Blog> Blogs { get; } = new List<Blog>();
 
-    public virtual ICollection<Bloodrequest> Bloodrequests { get; } = new List<Bloodrequest>();
+    public virtual ICollection<BloodRequest> Bloodrequests { get; } = new List<BloodRequest>();
 
     public virtual ICollection<Donation> Donations { get; } = new List<Donation>();
 
@@ -31,6 +31,6 @@ public partial class User
 
     public virtual Profile? Profile { get; set; }
 
-    public virtual Role? Role { get; set; }
+    public virtual Role Role { get; set; } = null!;
 
 }

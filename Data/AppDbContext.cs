@@ -18,7 +18,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Blog> Blogs { get; set; }
 
-    public virtual DbSet<Bloodrequest> Bloodrequests { get; set; }
+    public virtual DbSet<BloodRequest> Bloodrequests { get; set; }
 
     public virtual DbSet<Donation> Donations { get; set; }
 
@@ -62,7 +62,7 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("blogs_ibfk_1");
         });
 
-        modelBuilder.Entity<Bloodrequest>(entity =>
+        modelBuilder.Entity<BloodRequest>(entity =>
         {
             entity.HasKey(e => e.RequestId).HasName("PRIMARY");
 

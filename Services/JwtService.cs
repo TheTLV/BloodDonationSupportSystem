@@ -1,38 +1,32 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using BloodDonationSupportSystem.Models;
-using Microsoft.IdentityModel.Tokens;
-
-namespace BloodDonationSupportSystem.Services
+﻿namespace BloodDonationSupportSystem.Services
 {
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Security.Claims;
+    using System.Text;
+    using BloodDonationSupportSystem.Models;
+
     public class JwtService
     {
-        private readonly string _secret;
-        private readonly string _issuer;
-
-        public JwtService(IConfiguration config)
-        {
-            _secret = config["Jwt:Key"];
-            _issuer = config["Jwt:Issuer"];
-        }
+        private readonly IConfiguration _config;
+        public JwtService(IConfiguration config) => _config = config;
 
         public string GenerateToken(User user)
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User") // hoặc RoleId nếu bạn chưa có tên
+            new Claim("UserId", user.UserId.ToString()),
+            new Claim("Role", user.RId.ToString())
         };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _issuer,
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(6),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"])),
                 signingCredentials: creds
             );
 

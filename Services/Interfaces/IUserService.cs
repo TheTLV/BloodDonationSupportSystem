@@ -1,4 +1,6 @@
-﻿namespace BloodDonationSupportSystem.Services.Interfaces
+﻿using BloodDonationSupportSystem.DTOs;
+
+namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface IUserService
     {

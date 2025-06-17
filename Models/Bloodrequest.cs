@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BloodDonationSupportSystem.Models;
 
-public partial class Bloodrequest
+public partial class BloodRequest
 {
     public int RequestId { get; set; }
 
@@ -15,7 +15,7 @@ public partial class Bloodrequest
 
     public int? Quantity { get; set; }
 
-    public DateOnly? RequestDate { get; set; }
+    public DateOnly RequestDate { get; set; }
 
     public virtual User? User { get; set; }
 }
