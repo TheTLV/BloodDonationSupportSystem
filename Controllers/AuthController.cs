@@ -1,5 +1,6 @@
 ﻿using BloodDonationSupportSystem.DTOs;
 using BloodDonationSupportSystem.Services;
+using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +11,12 @@ namespace BloodDonationSupportSystem.Controllers
     [AllowAnonymous]
     public class AuthController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IAuthService _authService;
         private readonly JwtService _jwtService;
 
-        public AuthController(UserService userService , JwtService jwtService)
+        public AuthController(IAuthService authService , JwtService jwtService)
         {
-            _userService = userService;
+            _authService = authService;
             _jwtService = jwtService;
         }
 
@@ -24,7 +25,7 @@ namespace BloodDonationSupportSystem.Controllers
         {
             try
             {
-                var user = _userService.Register(dto.Name, dto.Email, dto.Password, dto.Phone);
+                var user = _authService.Register(dto.Name, dto.Email, dto.Password, dto.PhoneNumber );
 
                 return Ok(new
                 {
@@ -50,7 +51,7 @@ namespace BloodDonationSupportSystem.Controllers
         {
             try
             {
-                var user = _userService.Login(dto.Email, dto.Password);
+                var user = _authService.Login(dto.Email, dto.Password);
                 if (user == null)
                     return Unauthorized(new { message = "Sai tài khoản hoặc mật khẩu" });
 

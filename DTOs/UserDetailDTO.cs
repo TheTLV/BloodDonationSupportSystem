@@ -1,6 +1,6 @@
 ﻿namespace BloodDonationSupportSystem.DTOs
 {
-    public class UserDetailDTO
+    public class UserDetailDTO // dành cho admin , staff và user xem thông tin cá nhân chi tiết của user 
     {
         public int UserId { get; set; }
         public string Fullname { get; set; } = null!;

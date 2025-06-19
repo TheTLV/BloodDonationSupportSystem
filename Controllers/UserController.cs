@@ -11,24 +11,20 @@ namespace BloodDonationSupportSystem.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IBloodRequestService _bloodRequestService;
-        private readonly IDonationService _donationService;
+        private readonly IBloodService _bloodService;
 
         public UserController(
             IUserService userService,
-            IBloodRequestService bloodRequestService,
-            IDonationService donationService)
+            IBloodService bloodService)
         {
             _userService = userService;
-            _bloodRequestService = bloodRequestService;
-            _donationService = donationService;
+            _bloodService = bloodService;
         }
 
-        [HttpGet]
         [HttpPost("donate")]
         public IActionResult Donate([FromBody] BloodDonationDTO dto)
         {
-            var success = _donationService.CreateDonation(dto);
+            var success = _bloodService.CreateDonation(dto);
             if (!success) return BadRequest(new { message = "Lỗi tạo yêu cầu hiến máu" });
             return Ok(new { message = "Gửi yêu cầu hiến máu thành công" });
         }
@@ -36,7 +32,7 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("request")]
         public IActionResult RequestBlood([FromBody] BloodRequestDTO dto)
         {
-            var success = _bloodRequestService.CreateRequest(dto);
+            var success = _bloodService.CreateRequest(dto);
             if (!success) return BadRequest(new { message = "Lỗi gửi yêu cầu xin máu" });
             return Ok(new { message = "Gửi yêu cầu xin máu thành công" });
         }
@@ -44,14 +40,14 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpGet("donations")]
         public IActionResult GetDonations([FromQuery] int userId)
         {
-            var donations = _donationService.GetByUserId(userId);
+            var donations = _bloodService.GetDonationsByUserId(userId);
             return Ok(donations);
         }
 
         [HttpGet("requests")]
         public IActionResult GetRequests([FromQuery] int userId)
         {
-            var requests = _bloodRequestService.GetByUserId(userId);
+            var requests = _bloodService.GetRequestsByUserId(userId);
             return Ok(requests);
         }
 

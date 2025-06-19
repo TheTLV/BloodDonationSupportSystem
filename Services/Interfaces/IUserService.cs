@@ -4,9 +4,8 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<List<UserViewDTO>> GetAllUsersAsync();
-        Task<bool> DeleteUserAsync(int id);
-        Task<UserViewDTO> UpdateUserAsync(int id, UserUpdateDTO dto);
+        Task<UserDetailDTO?> GetOwnProfileAsync(int userId);
+        Task<bool> UpdateOwnProfileAsync(int userId, ProfileUpdateDTO dto);
 
     }
 }

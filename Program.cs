@@ -1,6 +1,7 @@
-using System.Text;
+﻿using System.Text;
 using BloodDonationSupportSystem.Data;
 using BloodDonationSupportSystem.Services;
+using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -26,14 +27,16 @@ namespace BloodDonationSupportSystem
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddScoped<UserService>();
+            services.AddScoped<IAuthService, AuthService>();
             services.AddSingleton<JwtService>();
 
+
             var jwtKey = config["Jwt:Key"];
-            if (string.IsNullOrEmpty(jwtKey) || jwtKey.Length < 32)
-            {
-                throw new Exception("JWT key is invalid or too short. Must be at least 32 characters.");
-            }
+            Console.WriteLine($"JWT Key: {jwtKey}");
+            var keyBytes = Encoding.ASCII.GetBytes(jwtKey); 
+            Console.WriteLine($"Key Bytes Length: {keyBytes.Length}");
+            if (keyBytes.Length < 32)
+                throw new Exception("JWT key must be at least 256 bits (32 bytes)");
 
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
@@ -46,9 +49,13 @@ namespace BloodDonationSupportSystem
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = config["Jwt:Issuer"],
                         ValidAudience = config["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
                     };
                 });
+
+
+
+
 
             var app = builder.Build();
 

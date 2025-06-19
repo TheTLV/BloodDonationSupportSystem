@@ -17,25 +17,25 @@ namespace BloodDonationSupportSystem.Controllers
             _userService = userService;
         }
 
-        [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var result = await _userService.GetAllUsersAsync();
-            return Ok(result);
-        }
+        //[HttpGet("users")]
+        //public async Task<IActionResult> GetAllUsers()
+        //{
+        //    var result = await _userService.GetAllUsersAsync();
+        //    return Ok(result);
+        //}
 
-        [HttpPut("users/{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDTO dto)
-        {
-            var result = await _userService.UpdateUserAsync(id, dto);
-            return Ok(result);
-        }
+        //[HttpPut("users/{id}")]
+        //public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDTO dto)
+        //{
+        //    var result = await _userService.UpdateUserAsync(id, dto);
+        //    return Ok(result);
+        //}
 
-        [HttpDelete("users/{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var result = await _userService.DeleteUserAsync(id);
-            return Ok(result);
-        }
+        //[HttpDelete("users/{id}")]
+        //public async Task<IActionResult> DeleteUser(int id)
+        //{
+        //    var result = await _userService.DeleteUserAsync(id);
+        //    return Ok(result);
+        //}
     }
 }

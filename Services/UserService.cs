@@ -13,50 +13,6 @@ namespace BloodDonationSupportSystem.Services
         {
             _context = context;
         }
-        public User Register(string name, string email, string password, string? phone)
-        {
-            if (_context.Users.Any(u => u.Email == email))
-                throw new Exception("Email đã tồn tại trong hệ thống!");
-
-            if (!string.IsNullOrEmpty(phone) && _context.Users.Any(u => u.PhoneNumber == phone))
-            {
-                throw new Exception("Số điện thoại này đã được sử dụng");
-            }
-
-
-            var user = new User
-            {
-                Fullname = name,
-                Email = email,
-                Password = password,
-                PhoneNumber = phone,
-                RId = 1
-            };
-
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
-
-            return user;
-        }
-
-
-        public User Login(string email, string password)
-        {
-            var user = _context.Users
-                .Include(u => u.Role!) 
-                .FirstOrDefault(u => u.Email == email && u.Password == password);
-
-            if (user == null)
-                throw new Exception("Sai email hoặc mật khẩu!");
-
-            if (user.Role == null)
-                throw new Exception("Role bị null nhaaa");
-
-            return user;
-        }
-
-
 
         public async Task<List<UserViewDTO>> GetAllUsersAsync()
         {
@@ -133,19 +89,7 @@ namespace BloodDonationSupportSystem.Services
             };
         }
 
-        public void RequestBlood(BloodRequestDTO dto)
-        {
-            var request = new BloodRequest
-            {
-                UserId = dto.UserId,
-                BloodGroup = dto.BloodType,
-                Quantity = dto.Quantity,
-                RequestDate = dto.RequestDate
-            };
 
-            _context.Bloodrequests.Add(request);
-            _context.SaveChanges();
-        }
 
 
 
