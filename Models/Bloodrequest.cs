@@ -15,7 +15,7 @@ public partial class BloodRequest
 
     public int? Quantity { get; set; }
 
-    public DateOnly RequestDate { get; set; }
+    public DateTime RequestDate { get; set; }
 
     public virtual User? User { get; set; }
 }

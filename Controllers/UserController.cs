@@ -38,17 +38,27 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("donations")]
-        public IActionResult GetDonations([FromQuery] int userId)
+        public IActionResult GetDonations()
         {
+            var userId = GetUserIdFromToken();
             var donations = _bloodService.GetDonationsByUserId(userId);
             return Ok(donations);
         }
 
         [HttpGet("requests")]
-        public IActionResult GetRequests([FromQuery] int userId)
+        public IActionResult GetRequests()
         {
+            var userId = GetUserIdFromToken();
             var requests = _bloodService.GetRequestsByUserId(userId);
             return Ok(requests);
+        }
+        private int GetUserIdFromToken()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null)
+                throw new Exception("Không tìm thấy UserId trong token");
+
+            return int.Parse(userIdClaim.Value);
         }
 
 

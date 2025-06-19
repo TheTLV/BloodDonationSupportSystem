@@ -28,6 +28,9 @@ namespace BloodDonationSupportSystem
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBloodService, BloodService>();
+
             services.AddSingleton<JwtService>();
 
 
@@ -49,7 +52,8 @@ namespace BloodDonationSupportSystem
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = config["Jwt:Issuer"],
                         ValidAudience = config["Jwt:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
+                        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                        RoleClaimType = "Role"
                     };
                 });
 
