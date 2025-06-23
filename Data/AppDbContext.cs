@@ -18,7 +18,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Blog> Blogs { get; set; }
 
-    public virtual DbSet<BloodRequest> Bloodrequests { get; set; }
+    public virtual DbSet<Bloodrequest> Bloodrequests { get; set; }
 
     public virtual DbSet<Donation> Donations { get; set; }
 
@@ -46,23 +46,22 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("blogs");
 
-            entity.HasIndex(e => e.CreatedBy, "created_by");
-
             entity.Property(e => e.BlogId).HasColumnName("blog_id");
-            entity.Property(e => e.Content)
+            entity.Property(e => e.Decription)
                 .HasColumnType("text")
-                .HasColumnName("content");
-            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+                .HasColumnName("decription");
+            entity.Property(e => e.Image)
+                .HasMaxLength(255)
+                .HasColumnName("image");
+            entity.Property(e => e.Link)
+                .HasMaxLength(255)
+                .HasColumnName("link");
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasColumnName("title");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Blogs)
-                .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("blogs_ibfk_1");
         });
 
-        modelBuilder.Entity<BloodRequest>(entity =>
+        modelBuilder.Entity<Bloodrequest>(entity =>
         {
             entity.HasKey(e => e.RequestId).HasName("PRIMARY");
 
@@ -76,6 +75,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("blood_group");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.RequestDate).HasColumnName("request_date");
+            entity.Property(e => e.RequestTime)
+                .HasColumnType("time")
+                .HasColumnName("request_time");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
@@ -83,7 +85,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Bloodrequests)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("bloodrequests_ibfk_1");
+                .HasConstraintName("user_id");
         });
 
         modelBuilder.Entity<Donation>(entity =>
@@ -99,6 +101,9 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(10)
                 .HasColumnName("blood_group");
             entity.Property(e => e.DonationDate).HasColumnName("donation_date");
+            entity.Property(e => e.DonationTime)
+                .HasColumnType("time")
+                .HasColumnName("donation_time");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
@@ -220,11 +225,11 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RID).HasName("PRIMARY");
+            entity.HasKey(e => e.Rid).HasName("PRIMARY");
 
             entity.ToTable("roles");
 
-            entity.Property(e => e.RID).HasColumnName("rid");
+            entity.Property(e => e.Rid).HasColumnName("rid");
             entity.Property(e => e.RoleName)
                 .HasMaxLength(50)
                 .HasColumnName("role_name");
@@ -240,7 +245,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasIndex(e => e.PhoneNumber, "phoneNumber_UNIQUE").IsUnique();
 
-            entity.HasIndex(e => e.RId, "role_id");
+            entity.HasIndex(e => e.RoleId, "role_id");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email)
@@ -255,10 +260,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(20)
                 .HasColumnName("phoneNumber");
-            entity.Property(e => e.RId).HasColumnName("role_id");
+            entity.Property(e => e.RoleId).HasColumnName("role_id");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
-                .HasForeignKey(d => d.RId)
+                .HasForeignKey(d => d.RoleId)
                 .HasConstraintName("users_ibfk_1");
         });
 

@@ -1,5 +1,5 @@
 ﻿using BloodDonationSupportSystem.DTOs;
-using BloodDonationSupportSystem.Services;
+using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ namespace BloodDonationSupportSystem.Controllers
         {
             try
             {
-                var user = _authService.Register(dto.Name, dto.Email, dto.Password, dto.PhoneNumber );
+                var user = _authService.Register(dto.Name, dto.Email, dto.Password, dto.PhoneNumber);
 
                 return Ok(new
                 {
@@ -67,7 +67,7 @@ namespace BloodDonationSupportSystem.Controllers
                         user.Fullname,
                         user.Email,
                         user.PhoneNumber,
-                        Role = user.RId
+                        Role = user.RoleId
                     }
                 });
             }

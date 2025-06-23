@@ -3,7 +3,7 @@ using BloodDonationSupportSystem.DTOs;
 using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Interfaces;
 
-namespace BloodDonationSupportSystem.Services
+namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class BloodService : IBloodService
     {
@@ -16,12 +16,13 @@ namespace BloodDonationSupportSystem.Services
 
         public bool CreateRequest(BloodRequestDTO dto)
         {
-            var request = new BloodRequest
+            var request = new Bloodrequest
             {
                 UserId = dto.UserId,
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
-                RequestDate = DateTime.Now
+                RequestDate = dto.RequestDate,
+                RequestTime = dto.RequestTime
             };
 
             _context.Bloodrequests.Add(request);
@@ -35,7 +36,8 @@ namespace BloodDonationSupportSystem.Services
                 UserId = dto.UserId,
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
-                DonationDate = DateTime.Now
+                DonationDate = dto.DonationDate,
+                DonationTime = dto.DonationTime
             };
 
             _context.Donations.Add(donation);
@@ -47,7 +49,7 @@ namespace BloodDonationSupportSystem.Services
             return _context.Donations.Where(d => d.UserId == userId).ToList();
         }
 
-        public IEnumerable<BloodRequest> GetRequestsByUserId(int userId)
+        public IEnumerable<Bloodrequest> GetRequestsByUserId(int userId)
         {
             return _context.Bloodrequests.Where(r => r.UserId == userId).ToList();
         }

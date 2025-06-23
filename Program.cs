@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using BloodDonationSupportSystem.Data;
-using BloodDonationSupportSystem.Services;
+using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,13 +31,28 @@ namespace BloodDonationSupportSystem
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBloodService, BloodService>();
 
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins(
+                        "http://localhost:3000",
+                        "http://localhost:5173",
+                        "https://6fc5-118-69-79-166.ngrok-free.app"
+                    )
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+                });
+            });
+
+
             services.AddSingleton<JwtService>();
 
 
             var jwtKey = config["Jwt:Key"];
-            Console.WriteLine($"JWT Key: {jwtKey}");
-            var keyBytes = Encoding.ASCII.GetBytes(jwtKey); 
-            Console.WriteLine($"Key Bytes Length: {keyBytes.Length}");
+            var keyBytes = Encoding.ASCII.GetBytes(jwtKey);
             if (keyBytes.Length < 32)
                 throw new Exception("JWT key must be at least 256 bits (32 bytes)");
 
@@ -66,6 +81,9 @@ namespace BloodDonationSupportSystem
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowFrontend");
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

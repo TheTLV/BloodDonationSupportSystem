@@ -7,11 +7,11 @@ public partial class Blog
 {
     public int BlogId { get; set; }
 
-    public int? CreatedBy { get; set; }
-
     public string? Title { get; set; }
 
-    public string? Content { get; set; }
+    public string? Image { get; set; }
 
-    public virtual User? CreatedByNavigation { get; set; }
+    public string? Link { get; set; }
+
+    public string? Decription { get; set; }
 }

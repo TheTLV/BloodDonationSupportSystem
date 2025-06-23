@@ -6,7 +6,7 @@ using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BloodDonationSupportSystem.Services
+namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class AuthService : IAuthService
     {
@@ -50,7 +50,7 @@ namespace BloodDonationSupportSystem.Services
                 Email = email,
                 Password = password,
                 PhoneNumber = phone,
-                RId = 1
+                RoleId = 1
             };
 
             _context.Users.Add(user);

@@ -2,7 +2,7 @@
 {
     public class ProfileUpdateDTO // dành cho user xem thông tin cá nhân và chỉnh sửa thông tin cá nhân của mình
     {
-        public int UserId { get; set; }
+
         public string Fullname { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Gender { get; set; } = null!;

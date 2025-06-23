@@ -9,6 +9,6 @@ namespace BloodDonationSupportSystem.Services.Interfaces
         IEnumerable<Donation> GetDonationsByUserId(int userId);
 
         bool CreateRequest(BloodRequestDTO dto);
-        IEnumerable<BloodRequest> GetRequestsByUserId(int userId);
+        IEnumerable<Bloodrequest> GetRequestsByUserId(int userId);
     }
 }
