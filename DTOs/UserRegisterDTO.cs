@@ -16,7 +16,17 @@ namespace BloodDonationSupportSystem.DTOs
         public required string Password { get; set; }
 
         [RegularExpression(@"^0\d{8,14}$", ErrorMessage = "Số điện thoại phải từ 9 đến 15 chữ số")]
-        public string? PhoneNumber { get; set; }  
+        public string? PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Giới tính là bắt buộc")]
+        public required string Gender { get; set; }
+
+        [Required(ErrorMessage = "Địa chỉ là bắt buộc")]
+        public required string Address { get; set; }
+
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
+        public DateOnly DateOfBirth { get; set; }
+
+        public string? BloodGroup { get; set; }
     }
 }

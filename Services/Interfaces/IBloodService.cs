@@ -5,10 +5,10 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface IBloodService
     {
-        bool CreateDonation(BloodDonationDTO dto);
+        bool CreateDonation(int userId, BloodDonationDTO dto);
         IEnumerable<Donation> GetDonationsByUserId(int userId);
 
-        bool CreateRequest(BloodRequestDTO dto);
+        bool CreateRequest(int userId , BloodRequestDTO dto);
         IEnumerable<Bloodrequest> GetRequestsByUserId(int userId);
     }
 }

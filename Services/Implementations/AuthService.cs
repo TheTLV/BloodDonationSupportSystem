@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Net;
+using System.Numerics;
 using System.Xml.Linq;
 using BloodDonationSupportSystem.Data;
 using BloodDonationSupportSystem.DTOs;
@@ -33,31 +34,37 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
 
 
-        public User Register(string name, string email, string password, string phone)
+        public User Register(string name, string email, string password, string? phone, string gender, DateOnly dob, string address)
         {
-            if (_context.Users.Any(u => u.Email == email))
-                throw new Exception("Email đã tồn tại trong hệ thống!");
-
-            if (!string.IsNullOrEmpty(phone) && _context.Users.Any(u => u.PhoneNumber == phone))
-            {
-                throw new Exception("Số điện thoại này đã được sử dụng");
-            }
-
+            var existingUser = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (existingUser != null)
+                throw new Exception("Email đã được sử dụng");
 
             var user = new User
             {
                 Fullname = name,
                 Email = email,
-                Password = password,
+                Password = password, 
                 PhoneNumber = phone,
-                RoleId = 1
+                RoleId = 1 
+            };
+
+            var profile = new Profile
+            {
+                User = user,
+                Gender = gender,
+                Address = address,
+                DateOfBirth = dob
             };
 
             _context.Users.Add(user);
+            _context.Profiles.Add(profile);
             _context.SaveChanges();
-
 
             return user;
         }
+
+
+
     }
 }

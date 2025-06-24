@@ -6,6 +6,6 @@ namespace BloodDonationSupportSystem.Services.Interfaces
     public interface IAuthService
     {
         User Login(string email, string password);
-        User Register(string name ,string email , string password , string phone  );
+        User Register(string name ,string email , string password , string? phone ,string gender , DateOnly dob, string address);
     }
 }

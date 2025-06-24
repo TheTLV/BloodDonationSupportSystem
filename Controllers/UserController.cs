@@ -12,7 +12,15 @@ namespace BloodDonationSupportSystem.Controllers
     {
         private readonly IUserService _userService;
         private readonly IBloodService _bloodService;
+        private int userId => GetUserIdFromToken();
+        private int GetUserIdFromToken()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null)
+                throw new Exception("Không tìm thấy UserId trong token");
 
+            return int.Parse(userIdClaim.Value);
+        }
         public UserController(
             IUserService userService,
             IBloodService bloodService)
@@ -24,7 +32,8 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("donate")]
         public IActionResult Donate([FromBody] BloodDonationDTO dto)
         {
-            var success = _bloodService.CreateDonation(dto);
+
+            var success = _bloodService.CreateDonation(userId, dto);
             if (!success) return BadRequest(new { message = "Lỗi tạo yêu cầu hiến máu" });
             return Ok(new { message = "Gửi yêu cầu hiến máu thành công" });
         }
@@ -32,7 +41,7 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("request")]
         public IActionResult RequestBlood([FromBody] BloodRequestDTO dto)
         {
-            var success = _bloodService.CreateRequest(dto);
+            var success = _bloodService.CreateRequest(userId ,dto);
             if (!success) return BadRequest(new { message = "Lỗi gửi yêu cầu xin máu" });
             return Ok(new { message = "Gửi yêu cầu xin máu thành công" });
         }
@@ -40,7 +49,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpGet("donations")]
         public IActionResult GetDonations()
         {
-            var userId = GetUserIdFromToken();
             var donations = _bloodService.GetDonationsByUserId(userId);
             return Ok(donations);
         }
@@ -48,17 +56,8 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpGet("requests")]
         public IActionResult GetRequests()
         {
-            var userId = GetUserIdFromToken();
             var requests = _bloodService.GetRequestsByUserId(userId);
             return Ok(requests);
-        }
-        private int GetUserIdFromToken()
-        {
-            var userIdClaim = User.FindFirst("UserId");
-            if (userIdClaim == null)
-                throw new Exception("Không tìm thấy UserId trong token");
-
-            return int.Parse(userIdClaim.Value);
         }
 
 
@@ -66,7 +65,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpGet("profile")]
         public async Task<IActionResult> GetOwnProfile()
         {
-            var userId = GetUserIdFromToken();
             var userDetail = await _userService.GetOwnProfileAsync(userId);
             if (userDetail == null) return NotFound(new { message = "Không tìm thấy thông tin người dùng" });
             return Ok(userDetail);
@@ -75,7 +73,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO dto)
         {
-            var userId = GetUserIdFromToken();
             var updatedUser = await _userService.UpdateMyProfileAsync(userId, dto);
             if (updatedUser == null) return BadRequest(new { message = "Cập nhật thông tin người dùng thất bại" });
             return Ok(updatedUser);
@@ -84,7 +81,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("cancel-donation/{donationId}")]
         public IActionResult CancelMyDonation(int donationId)
         {
-            var userId = GetUserIdFromToken();
             try
             {
                 _userService.CancelMyDonation(donationId, userId);
@@ -99,7 +95,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("update-donation/{donationId}")]
         public IActionResult UpdateMyDonation([FromBody] DonationUpdateDTO dto)
     {
-        var userId = GetUserIdFromToken();
         try
         {
             _userService.UpdateMyDonation(dto, userId);
@@ -114,7 +109,6 @@ namespace BloodDonationSupportSystem.Controllers
     [HttpPost("cancel-request/{requestId}")]
         public IActionResult CancelMyBloodRequest(int requestId)
         {
-            var userId = GetUserIdFromToken();
             try
             {
                 _userService.CancelMyBloodRequest(requestId, userId);
@@ -129,7 +123,6 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("update-request/{requestId}")]
         public IActionResult UpdateMyBloodRequest([FromBody] RequestUpdateDTO dto)
         {
-            var userId = GetUserIdFromToken();
             try
             {
                 _userService.UpdateMyBloodRequest(dto, userId);

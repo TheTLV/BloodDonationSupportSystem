@@ -58,14 +58,15 @@ namespace BloodDonationSupportSystem.Services.Implementations
         }
 
 
-        public async Task<UserDetailDTO?> GetOwnProfileAsync(int userId)
+        public async Task<UserDetailDTO> GetOwnProfileAsync(int userId)
         {
             var user = await _context.Users
                 .Include(u => u.Role)
                 .Include(u => u.Profile)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
 
-            if (user == null) return null;
+            if (user == null)
+                throw new Exception("User not found");
 
             return new UserDetailDTO
             {
@@ -84,12 +85,14 @@ namespace BloodDonationSupportSystem.Services.Implementations
         }
 
 
-        public async Task<bool> UpdateMyProfileAsync(int userId, ProfileUpdateDTO dto)
+        public async Task<ProfileUpdateDTO> UpdateMyProfileAsync(int userId, ProfileUpdateDTO dto)
         {
             var user = await _context.Users
                 .Include(u => u.Profile)
                 .FirstOrDefaultAsync(u => u.UserId == userId);
-            if (user == null) return false;
+
+            if (user == null)
+                throw new Exception("User not found");
 
             user.Fullname = dto.Fullname ?? user.Fullname;
             user.PhoneNumber = dto.PhoneNumber ?? user.PhoneNumber;
@@ -106,7 +109,22 @@ namespace BloodDonationSupportSystem.Services.Implementations
             user.Profile.DateOfBirth = dto.DateOfBirth ?? user.Profile.DateOfBirth;
 
             await _context.SaveChangesAsync();
-            return true;
+            return new ProfileUpdateDTO
+            {
+                Fullname = user.Fullname,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                Gender = user.Profile.Gender,
+                DateOfBirth = user.Profile.DateOfBirth,
+                Address = user.Profile.Address
+
+            };
         }
+
+
+
+
+
+
     }
 }

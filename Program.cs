@@ -4,6 +4,7 @@ using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace BloodDonationSupportSystem
 {
@@ -18,41 +19,68 @@ namespace BloodDonationSupportSystem
 
             builder.WebHost.UseUrls("http://0.0.0.0:80");
 
+            // ========= Database =========
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(
                     config.GetConnectionString("DefaultConnection"),
                     ServerVersion.AutoDetect(config.GetConnectionString("DefaultConnection"))
                 ));
 
+            // ========= Controllers + Swagger =========
             services.AddControllers();
-            services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IBloodService, BloodService>();
 
-
-            services.AddCors(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.AddPolicy("AllowFrontend", policy =>
+                c.SwaggerDoc("v1", new() { Title = "Blood Donation API", Version = "v1" });
+
+                // 💥 Add JWT support to Swagger UI
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    policy.WithOrigins(
-                        "http://localhost:3000",
-                        "http://localhost:5173",
-                        "https://6fc5-118-69-79-166.ngrok-free.app"
-                    )
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your token.\nExample: Bearer abc123..."
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
             });
 
-
+            // ========= Dependency Injection =========
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBloodService, BloodService>();
             services.AddSingleton<JwtService>();
 
+            // ========= CORS =========
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
+            // ========= JWT Auth =========
             var jwtKey = config["Jwt:Key"];
-            var keyBytes = Encoding.ASCII.GetBytes(jwtKey);
+            var keyBytes = Encoding.ASCII.GetBytes(jwtKey!);
             if (keyBytes.Length < 32)
                 throw new Exception("JWT key must be at least 256 bits (32 bytes)");
 
@@ -72,20 +100,19 @@ namespace BloodDonationSupportSystem
                     };
                 });
 
-
-
-
-
+            // ========= App build + middleware =========
             var app = builder.Build();
 
             app.UseSwagger();
             app.UseSwaggerUI();
+
             app.UseHttpsRedirection();
 
-            app.UseCors("AllowFrontend");
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
             app.Run();
         }

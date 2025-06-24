@@ -14,11 +14,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _context = context;
         }
 
-        public bool CreateRequest(BloodRequestDTO dto)
+        public bool CreateRequest(int userId, BloodRequestDTO dto)
         {
             var request = new Bloodrequest
             {
-                UserId = dto.UserId,
+                UserId = userId,
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
                 RequestDate = dto.RequestDate,
@@ -29,11 +29,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
             return _context.SaveChanges() > 0;
         }
 
-        public bool CreateDonation(BloodDonationDTO dto)
+        public bool CreateDonation(int userId ,BloodDonationDTO dto)
         {
             var donation = new Donation
             {
-                UserId = dto.UserId,
+                UserId = userId,
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
                 DonationDate = dto.DonationDate,

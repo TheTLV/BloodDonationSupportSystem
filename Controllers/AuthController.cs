@@ -1,8 +1,14 @@
-﻿using BloodDonationSupportSystem.DTOs;
+﻿using System.Net;
+using System.Numerics;
+using System.Reflection;
+using System.Xml.Linq;
+using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BloodDonationSupportSystem.Controllers
 {
@@ -25,12 +31,23 @@ namespace BloodDonationSupportSystem.Controllers
         {
             try
             {
-                var user = _authService.Register(dto.Name, dto.Email, dto.Password, dto.PhoneNumber);
+                var user = _authService.Register(
+                    dto.Name,
+                    dto.Email,
+                    dto.Password,
+                    dto.PhoneNumber,
+                    dto.Gender,
+                    dto.DateOfBirth,
+                    dto.Address
+                );
+
+                var token = _jwtService.GenerateToken(user); 
 
                 return Ok(new
                 {
-                    Message = "Đăng ký thành công ",
-                    User = new
+                    message = "Đăng ký thành công",
+                    token,
+                    user = new
                     {
                         user.UserId,
                         user.Fullname,
@@ -42,9 +59,10 @@ namespace BloodDonationSupportSystem.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Error = ex.Message });
+                return BadRequest(new { error = ex.Message });
             }
         }
+
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDTO dto)
