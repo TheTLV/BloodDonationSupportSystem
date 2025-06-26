@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BloodDonationSupportSystem.DTOs
+namespace BloodDonationSupportSystem.DTOs.AuthDTOs
 {
     public class UserLoginDTO
     {

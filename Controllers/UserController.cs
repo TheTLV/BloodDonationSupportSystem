@@ -1,4 +1,5 @@
-﻿using BloodDonationSupportSystem.DTOs;
+﻿using BloodDonationSupportSystem.DTOs.BloodDTO;
+using BloodDonationSupportSystem.DTOs.UsersDTOs;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace BloodDonationSupportSystem.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize(Roles = "1,2,3")]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IBloodService _bloodService;

@@ -1,5 +1,6 @@
 ﻿using BloodDonationSupportSystem.Data;
-using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.DTOs.BloodDTO;
+using BloodDonationSupportSystem.DTOs.UsersDTOs;
 using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -70,7 +71,6 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
             return new UserDetailDTO
             {
-                UserId = user.UserId,
                 Fullname = user.Fullname,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -78,9 +78,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 BloodGroup = user.Profile?.BloodGroup,
                 Address = user.Profile?.Address,
                 Gender = user.Profile?.Gender,
-                DateOfBirth = user.Profile?.DateOfBirth,
-                LastDonationDate = user.Profile?.LastDonationDate,
-                LastReceivedDate = user.Profile?.LastReceivedDate
+                DateOfBirth = user.Profile?.DateOfBirth
             };
         }
 
@@ -115,9 +113,9 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 PhoneNumber = user.PhoneNumber,
                 Email = user.Email,
                 Gender = user.Profile.Gender,
+                BloodGroup = user.Profile.BloodGroup,
                 DateOfBirth = user.Profile.DateOfBirth,
                 Address = user.Profile.Address
-
             };
         }
 

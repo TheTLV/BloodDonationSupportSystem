@@ -47,7 +47,7 @@ public partial class AppDbContext : DbContext
             entity.ToTable("blogs");
 
             entity.Property(e => e.BlogId).HasColumnName("blog_id");
-            entity.Property(e => e.Decription)
+            entity.Property(e => e.Description)
                 .HasColumnType("text")
                 .HasColumnName("decription");
             entity.Property(e => e.Image)

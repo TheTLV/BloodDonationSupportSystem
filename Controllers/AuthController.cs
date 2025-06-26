@@ -2,7 +2,7 @@
 using System.Numerics;
 using System.Reflection;
 using System.Xml.Linq;
-using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.DTOs.AuthDTOs;
 using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;

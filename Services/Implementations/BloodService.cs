@@ -1,5 +1,5 @@
 ﻿using BloodDonationSupportSystem.Data;
-using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Interfaces;
 

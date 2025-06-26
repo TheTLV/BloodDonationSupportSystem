@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Xml.Linq;
 using BloodDonationSupportSystem.Data;
 using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.DTOs.AuthDTOs;
 using BloodDonationSupportSystem.Models;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;

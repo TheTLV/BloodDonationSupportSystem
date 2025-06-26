@@ -1,4 +1,4 @@
-﻿namespace BloodDonationSupportSystem.DTOs
+﻿namespace BloodDonationSupportSystem.DTOs.BloodDTO
 {
     public class DonationStatusUpdateDTO
     {

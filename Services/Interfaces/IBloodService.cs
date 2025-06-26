@@ -1,4 +1,4 @@
-﻿using BloodDonationSupportSystem.DTOs;
+﻿using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.Models;
 
 namespace BloodDonationSupportSystem.Services.Interfaces
@@ -10,5 +10,6 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 
         bool CreateRequest(int userId , BloodRequestDTO dto);
         IEnumerable<Bloodrequest> GetRequestsByUserId(int userId);
+
     }
 }

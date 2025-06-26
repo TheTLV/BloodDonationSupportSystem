@@ -1,4 +1,5 @@
-﻿using BloodDonationSupportSystem.DTOs;
+﻿using BloodDonationSupportSystem.DTOs.BloodDTO;
+using BloodDonationSupportSystem.DTOs.UsersDTOs;
 
 namespace BloodDonationSupportSystem.Services.Interfaces
 {

@@ -1,4 +1,4 @@
-﻿namespace BloodDonationSupportSystem.DTOs
+﻿namespace BloodDonationSupportSystem.DTOs.UsersDTOs
 {
     public class UserViewDTO // dành cho admin và staff xem list user
     {

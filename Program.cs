@@ -64,6 +64,7 @@ namespace BloodDonationSupportSystem
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBloodService, BloodService>();
+            services.AddScoped<IBlogService, BlogService>();
             services.AddSingleton<JwtService>();
 
             // ========= CORS =========
