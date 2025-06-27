@@ -81,7 +81,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 }).ToListAsync();
         }
 
-        public async Task<IEnumerable<BlogDetailDTO>> SearchBlogsAsync(string keyword)
+        public async Task<IEnumerable<BlogDetailDTO>> SearchBlogsByTitleOrDesAsync(string keyword)
         {
             return await _context.Blogs
                 .Where(b =>

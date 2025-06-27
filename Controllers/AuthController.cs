@@ -31,16 +31,7 @@ namespace BloodDonationSupportSystem.Controllers
         {
             try
             {
-                var user = _authService.Register(
-                    dto.Name,
-                    dto.Email,
-                    dto.Password,
-                    dto.PhoneNumber,
-                    dto.Gender,
-                    dto.DateOfBirth,
-                    dto.Address
-                );
-
+                var user = _authService.Register(dto);
                 var token = _jwtService.GenerateToken(user); 
 
                 return Ok(new
@@ -53,7 +44,7 @@ namespace BloodDonationSupportSystem.Controllers
                         user.Fullname,
                         user.Email,
                         user.PhoneNumber,
-                        user.Role
+                        Role= 1
                     }
                 });
             }
@@ -67,33 +58,26 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDTO dto)
         {
-            try
-            {
-                var user = _authService.Login(dto.Email, dto.Password);
-                if (user == null)
-                    return Unauthorized(new { message = "Sai tài khoản hoặc mật khẩu" });
+            // B2: Auth service kiểm tra đăng nhập
+            var user = _authService.Login(dto); // ← dùng dto ở đây
 
-                var token = _jwtService.GenerateToken(user);
+            // B3: Nếu đúng → sinh token từ User
+            var token = _jwtService.GenerateToken(user);
 
-                return Ok(new
-                {
-                    message = "Đăng nhập thành công",
-                    token,
-                    user = new
-                    {
-                        user.UserId,
-                        user.Fullname,
-                        user.Email,
-                        user.PhoneNumber,
-                        Role = user.RoleId
-                    }
-                });
-            }
-            catch (Exception ex)
+            // B4: Trả LoginResultDTO về
+            var result = new LoginResultDTO
             {
-                return Unauthorized(new { Error = ex.Message });
-            }
+                UserId = user.UserId,
+                Name = user.Fullname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role?.RoleName ?? "Unknown",
+                Token = token
+            };
+
+            return Ok(result);
         }
+
 
 
 

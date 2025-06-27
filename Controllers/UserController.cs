@@ -42,7 +42,7 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("request")]
         public IActionResult RequestBlood([FromBody] BloodRequestDTO dto)
         {
-            var success = _bloodService.CreateRequest(userId ,dto);
+            var success = _bloodService.CreateRequest(userId, dto);
             if (!success) return BadRequest(new { message = "Lỗi gửi yêu cầu xin máu" });
             return Ok(new { message = "Gửi yêu cầu xin máu thành công" });
         }
@@ -71,7 +71,7 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(userDetail);
         }
 
-        [HttpPost("update-profile")]
+        [HttpPost("updateProfile")]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO dto)
         {
             var updatedUser = await _userService.UpdateMyProfileAsync(userId, dto);
@@ -79,12 +79,12 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(updatedUser);
         }
 
-        [HttpPost("cancel-donation/{donationId}")]
-        public IActionResult CancelMyDonation(int donationId)
+        [HttpPost("cancelDonation/{id}")]
+        public IActionResult CancelMyDonation(int id)
         {
             try
             {
-                _userService.CancelMyDonation(donationId, userId);
+                _userService.CancelMyDonation(id, userId);
                 return Ok(new { message = "Hủy yêu cầu hiến máu thành công" });
             }
             catch (Exception ex)
@@ -93,26 +93,27 @@ namespace BloodDonationSupportSystem.Controllers
             }
         }
 
-        [HttpPost("update-donation/{donationId}")]
-        public IActionResult UpdateMyDonation([FromBody] DonationUpdateDTO dto)
-    {
-        try
-        {
-            _userService.UpdateMyDonation(dto, userId);
-            return Ok(new { message = "Cập nhật yêu cầu hiến máu thành công" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
-    }
-
-    [HttpPost("cancel-request/{requestId}")]
-        public IActionResult CancelMyBloodRequest(int requestId)
+        [HttpPost("updateDonation/{id}")]
+        public IActionResult UpdateMyDonation(int id, [FromBody] DonationUpdateDTO dto)
         {
             try
             {
-                _userService.CancelMyBloodRequest(requestId, userId);
+                _userService.UpdateMyDonation(id, dto, userId); // Truyền ID riêng
+                return Ok(new { message = "Cập nhật yêu cầu hiến máu thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
+        [HttpPost("cancelRequest/{id}")]
+        public IActionResult CancelMyBloodRequest(int id)
+        {
+            try
+            {
+                _userService.CancelMyBloodRequest(id, userId);
                 return Ok(new { message = "Hủy yêu cầu xin máu thành công" });
             }
             catch (Exception ex)
@@ -121,7 +122,7 @@ namespace BloodDonationSupportSystem.Controllers
             }
         }
 
-        [HttpPost("update-request/{requestId}")]
+        [HttpPost("updateRequest/{id}")]
         public IActionResult UpdateMyBloodRequest([FromBody] RequestUpdateDTO dto)
         {
             try

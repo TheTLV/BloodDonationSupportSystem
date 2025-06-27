@@ -9,6 +9,6 @@ namespace BloodDonationSupportSystem.Services.Interfaces
         Task<bool> DeleteBlogAsync(int blogId);
         Task<IEnumerable<BlogDetailDTO>> GetAllBlogsAsync();
         Task<BlogDetailDTO?> GetBlogByIdAsync(int blogId);
-        Task<IEnumerable<BlogDetailDTO>> SearchBlogsAsync(string keyword);
+        Task<IEnumerable<BlogDetailDTO>> SearchBlogsByTitleOrDesAsync(string keyword);
     }
 }

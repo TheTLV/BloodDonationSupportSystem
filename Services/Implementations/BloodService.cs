@@ -22,7 +22,8 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
                 RequestDate = dto.RequestDate,
-                RequestTime = dto.RequestTime
+                RequestTime = dto.RequestTime,
+                Status = "pending" 
             };
 
             _context.Bloodrequests.Add(request);
@@ -37,7 +38,8 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 BloodGroup = dto.BloodType,
                 Quantity = dto.Quantity,
                 DonationDate = dto.DonationDate,
-                DonationTime = dto.DonationTime
+                DonationTime = dto.DonationTime,
+                Status = "pending"
             };
 
             _context.Donations.Add(donation);

@@ -43,7 +43,7 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(new { message = "Xóa blog thành công" });
         }
 
-
+        
         [HttpGet("getAllBlog")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAll()
@@ -53,11 +53,11 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
 
-        [HttpGet("search")]
+        [HttpGet("searchByTitleOrDecription")]
         [AllowAnonymous]
         public async Task<IActionResult> Search([FromQuery] string keyword)
         {
-            var blogs = await _blogService.SearchBlogsAsync(keyword);
+            var blogs = await _blogService.SearchBlogsByTitleOrDesAsync(keyword);
             return Ok(blogs);
         }
 

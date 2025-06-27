@@ -47,16 +47,18 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _context.SaveChanges();
         }
 
-        public void UpdateMyDonation(DonationUpdateDTO dto, int userId)
+        public void UpdateMyDonation(int donationId, DonationUpdateDTO dto, int userId)
         {
-            var donation = _context.Donations.FirstOrDefault(d => d.DonationId == dto.DonationId && d.UserId == userId);
+            var donation = _context.Donations.FirstOrDefault(d => d.DonationId == donationId && d.UserId == userId);
             if (donation == null)
                 throw new Exception("Donation not found or access denied");
+
             donation.Quantity = dto.Quantity ?? donation.Quantity;
             donation.DonationDate = dto.DonationDate ?? donation.DonationDate;
             donation.DonationTime = dto.DonationTime ?? donation.DonationTime;
             _context.SaveChanges();
         }
+
 
 
         public async Task<UserDetailDTO> GetOwnProfileAsync(int userId)
