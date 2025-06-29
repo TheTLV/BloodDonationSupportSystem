@@ -13,6 +13,8 @@ namespace BloodDonationSupportSystem
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
             var config = builder.Configuration;
             var services = builder.Services;

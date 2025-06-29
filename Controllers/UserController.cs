@@ -71,7 +71,7 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(userDetail);
         }
 
-        [HttpPost("updateProfile")]
+        [HttpPut("updateProfile")]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO dto)
         {
             var updatedUser = await _userService.UpdateMyProfileAsync(userId, dto);
@@ -79,21 +79,8 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(updatedUser);
         }
 
-        [HttpPost("cancelDonation/{id}")]
-        public IActionResult CancelMyDonation(int id)
-        {
-            try
-            {
-                _userService.CancelMyDonation(id, userId);
-                return Ok(new { message = "Hủy yêu cầu hiến máu thành công" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
 
-        [HttpPost("updateDonation/{id}")]
+        [HttpPut("updateDonation/{id}")]
         public IActionResult UpdateMyDonation(int id, [FromBody] DonationUpdateDTO dto)
         {
             try
@@ -108,21 +95,25 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
 
-        [HttpPost("cancelRequest/{id}")]
-        public IActionResult CancelMyBloodRequest(int id)
+        [HttpDelete("deleteRequest/{id}")]
+        public async Task<IActionResult> DeleteMyRequest(int id)
         {
-            try
-            {
-                _userService.CancelMyBloodRequest(id, userId);
-                return Ok(new { message = "Hủy yêu cầu xin máu thành công" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var success = await _userService.DeleteMyBloodRequestAsync(id, userId);
+            if (!success) return NotFound(new { message = "Không tìm thấy yêu cầu" });
+            return Ok(new { message = "Đã hủy yêu cầu thành công" });
         }
 
-        [HttpPost("updateRequest/{id}")]
+        [HttpDelete("deleteDonation/{id}")]
+        public async Task<IActionResult> DeleteMyDonation(int id)
+        {
+           
+            var success = await _userService.DeleteMyDonationAsync(id, userId);
+            if (!success) return NotFound(new { message = "Không tìm thấy hiến máu" });
+            return Ok(new { message = "Đã hủy hiến máu thành công" });
+        }
+
+
+        [HttpPut("updateRequest/{id}")]
         public IActionResult UpdateMyBloodRequest([FromBody] RequestUpdateDTO dto)
         {
             try
@@ -135,5 +126,38 @@ namespace BloodDonationSupportSystem.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpGet("getDonate/{id}")]
+        public async Task<IActionResult> GetDonate(int id)
+        {
+            try
+            {
+                var result = await _bloodService.GetDonate(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("getRequest/{id}")]
+        public async Task<IActionResult> GetRequest(int id)
+        {
+            try
+            {
+                var result = await _bloodService.GetRequest(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+        }
+
+
+
+
+
     }
 }

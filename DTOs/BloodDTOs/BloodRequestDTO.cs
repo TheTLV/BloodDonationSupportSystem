@@ -6,6 +6,5 @@
         public int Quantity { get; set; }
         public DateOnly RequestDate { get; set; }
         public TimeOnly RequestTime { get; set; }
-        public string Status { get; set; } = "Pending";
     }
 }

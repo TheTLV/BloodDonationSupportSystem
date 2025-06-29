@@ -26,7 +26,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
 
-        [HttpPost("update/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BlogUpdateDTO dto)
         {
             var success = await _blogService.UpdateBlogAsync(id, dto);
@@ -35,7 +35,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
 
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _blogService.DeleteBlogAsync(id);

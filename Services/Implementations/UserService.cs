@@ -15,15 +15,6 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _context = context;
         }
 
-        public void CancelMyBloodRequest(int requestsId, int userId)
-        {
-            var request = _context.Bloodrequests.FirstOrDefault(d => d.RequestId == requestsId && d.UserId == userId);
-            if (request == null)
-                throw new Exception("Request not found or access denied");
-
-            request.Status = "cancelled";
-            _context.SaveChanges();
-        }
 
         public void UpdateMyBloodRequest(RequestUpdateDTO dto, int userId)
         {
@@ -36,15 +27,30 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _context.SaveChanges();
         }
 
-
-        public void CancelMyDonation(int donationId, int userId)
+        public async Task<bool> DeleteMyBloodRequestAsync(int requestId, int userId)
         {
-            var donation = _context.Donations.FirstOrDefault(d => d.DonationId == donationId && d.UserId == userId);
-            if (donation == null)
-                throw new Exception("Donation not found or access denied");
+            var request = await _context.Bloodrequests
+                .FirstOrDefaultAsync(r => r.RequestId == requestId && r.UserId == userId);
 
-            donation.Status = "cancelled";
-            _context.SaveChanges();
+            if (request == null)
+                return false;
+
+            _context.Bloodrequests.Remove(request);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteMyDonationAsync(int donationId, int userId)
+        {
+            var donation = await _context.Donations
+                .FirstOrDefaultAsync(d => d.DonationId == donationId && d.UserId == userId);
+
+            if (donation == null)
+                return false;
+
+            _context.Donations.Remove(donation);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public void UpdateMyDonation(int donationId, DonationUpdateDTO dto, int userId)
@@ -58,7 +64,6 @@ namespace BloodDonationSupportSystem.Services.Implementations
             donation.DonationTime = dto.DonationTime ?? donation.DonationTime;
             _context.SaveChanges();
         }
-
 
 
         public async Task<UserDetailDTO> GetOwnProfileAsync(int userId)
@@ -121,10 +126,61 @@ namespace BloodDonationSupportSystem.Services.Implementations
             };
         }
 
+        public async Task<IEnumerable<UserViewDTO>> GetAllUsersAsync()
+        {
+            return await _context.Users
+                .Include(u => u.Role)
+                .Select(u => new UserViewDTO
+                {
+                    UserId = u.UserId,
+                    Fullname = u.Fullname,
+                    Email = u.Email,
+                    RoleName = u.Role.RoleName
+                })
+                .ToListAsync();
+        }
 
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
 
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
+        public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
 
+            user.RoleId = newRoleId;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
+        public async Task<UserDetailDTO> GetUserDetailByIdAsync(int userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.Profile)
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            return new UserDetailDTO
+            {
+                Fullname = user.Fullname,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                RoleName = user.Role?.RoleName ?? "Unknown",
+                BloodGroup = user.Profile?.BloodGroup,
+                Address = user.Profile?.Address,
+                Gender = user.Profile?.Gender,
+                DateOfBirth = user.Profile?.DateOfBirth
+            };
+        }
     }
 }
