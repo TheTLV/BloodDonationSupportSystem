@@ -17,12 +17,12 @@ namespace BloodDonationSupportSystem.Services.Interfaces
         // --- Admin Functions ---
 
         // Donation
-        Task<IEnumerable<DonationViewDTO>> GetAllDonationsForAdmin();
+        Task<IEnumerable<AdminDonationViewAllDTO>> GetAllDonationsForAdmin();
         Task<IEnumerable<DonationViewDTO>> SearchDonations(string? bloodGroup, string? status);
         Task<bool> UpdateDonationStatusAsync(int donationId, string newStatus);
 
         // Request
-        Task<IEnumerable<RequestsViewDTO>> GetAllRequestsForAdmin();
+        Task<IEnumerable<AdminRequestsViewAllDTO>> GetAllRequestsForAdmin();
         Task<IEnumerable<RequestsViewDTO>> SearchRequests(string? bloodGroup, string? status);
         Task<bool> UpdateRequestStatusAsync(int requestId, string newStatus);
     }

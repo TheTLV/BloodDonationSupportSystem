@@ -15,10 +15,6 @@ public partial class Notification
 
     public DateOnly? NotifDate { get; set; }
 
-    public bool? IsActionRequired { get; set; }
-
-    public string? ResponseStatus { get; set; }
-
     public virtual Event? Event { get; set; }
 
     public virtual User? User { get; set; }

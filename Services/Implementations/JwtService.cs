@@ -17,7 +17,7 @@
             var claims = new[]
             {
             new Claim("UserId", user.UserId.ToString()),
-            new Claim("Role", user.RoleId.ToString())
+            new Claim("Role", user.RoleId.ToString()),
         };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

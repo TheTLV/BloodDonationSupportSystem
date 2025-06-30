@@ -7,13 +7,13 @@ public partial class Event
 {
     public int EventId { get; set; }
 
-    public int? CreatedBy { get; set; }
+    public int CreatedBy { get; set; }
 
-    public string? Title { get; set; }
+    public required string Title { get; set; }
 
-    public string? Description { get; set; }
+    public required string Description { get; set; }
 
-    public DateOnly? EventDate { get; set; }
+    public DateOnly EventDate { get; set; }
 
     public virtual User? CreatedByNavigation { get; set; }
 

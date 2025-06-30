@@ -17,9 +17,5 @@ public partial class Profile
 
     public string? BloodGroup { get; set; }
 
-    public DateOnly? LastDonationDate { get; set; }
-
-    public DateOnly? LastReceivedDate { get; set; }
-
     public virtual User? User { get; set; }
 }

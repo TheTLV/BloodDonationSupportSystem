@@ -53,7 +53,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<BlogDetailDTO> GetBlogByIdAsync(int blogId)
+        public async Task<BlogDetailDTO?> GetBlogByIdAsync(int blogId)
         {
             var blog = await _context.Blogs.FindAsync(blogId);
             if (blog == null) return null;

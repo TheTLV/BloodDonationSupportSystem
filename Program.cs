@@ -1,5 +1,8 @@
 ﻿using System.Text;
 using BloodDonationSupportSystem.Data;
+using BloodDonationSupportSystem.Repositories.Implementations;
+using BloodDonationSupportSystem.Repositories.Interface;
+using BloodDonationSupportSystem.Services;
 using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -63,11 +66,17 @@ namespace BloodDonationSupportSystem
             });
 
             // ========= Dependency Injection =========
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IBloodService, BloodService>();
-            services.AddScoped<IBlogService, BlogService>();
-            services.AddSingleton<JwtService>();
+            builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IBloodService, BloodService>();
+            builder.Services.AddScoped<IBlogService, BlogService>();
+            builder.Services.AddSingleton<JwtService>();
 
             // ========= CORS =========
             services.AddCors(options =>

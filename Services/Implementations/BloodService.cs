@@ -126,19 +126,26 @@ namespace BloodDonationSupportSystem.Services.Implementations
         }
 
 
-        public async Task<IEnumerable<DonationViewDTO>> GetAllDonationsForAdmin()
+        public async Task<IEnumerable<AdminDonationViewAllDTO>> GetAllDonationsForAdmin()
         {
             return await _context.Donations
-                .Select(d => new DonationViewDTO
+                .Include(d => d.User) // nếu cần thông tin từ User
+                .Select(d => new AdminDonationViewAllDTO
                 {
-                    BloodGroup = d.BloodGroup,
+                    DonationId = d.DonationId,
+                    UserId = d.UserId,
+                    Fullname = d.User.Fullname,
                     Status = d.Status,
+                    BloodGroup = d.BloodGroup,
                     Quantity = d.Quantity,
+                    Gender = d.User.Profile.Gender,
+                    DateOfBirth = d.User.Profile.DateOfBirth,
                     DonationDate = d.DonationDate,
                     DonationTime = d.DonationTime
                 })
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<DonationViewDTO>> SearchDonations(string? bloodGroup, string? status)
         {
@@ -165,20 +172,27 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
 
 
-        public async Task<IEnumerable<RequestsViewDTO>> GetAllRequestsForAdmin()
+        public async Task<IEnumerable<AdminRequestsViewAllDTO>> GetAllRequestsForAdmin()
         {
             return await _context.Bloodrequests
-                .Select(r => new RequestsViewDTO
+                .Include(r => r.User)
+                    .ThenInclude(u => u.Profile) // nếu Profile là 1 bảng riêng hoặc object riêng
+                .Select(r => new AdminRequestsViewAllDTO
                 {
-
-                    BloodGroup = r.BloodGroup,
+                    RequestId = r.RequestId,
+                    UserId = r.UserId,
+                    Fullname = r.User.Fullname,
                     Status = r.Status,
+                    BloodGroup = r.BloodGroup,
                     Quantity = r.Quantity,
+                    Gender = r.User.Profile.Gender,
+                    DateOfBirth = r.User.Profile.DateOfBirth,
                     RequestDate = r.RequestDate,
                     RequestTime = r.RequestTime
                 })
                 .ToListAsync();
         }
+
 
         public async Task<IEnumerable<RequestsViewDTO>> SearchRequests(string? bloodGroup, string? status)
         {

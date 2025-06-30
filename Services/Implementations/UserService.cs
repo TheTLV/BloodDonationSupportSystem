@@ -135,6 +135,8 @@ namespace BloodDonationSupportSystem.Services.Implementations
                     UserId = u.UserId,
                     Fullname = u.Fullname,
                     Email = u.Email,
+                    BloodGroup = u.Profile.BloodGroup,
+                    PhoneNumber = u.PhoneNumber,
                     RoleName = u.Role.RoleName
                 })
                 .ToListAsync();

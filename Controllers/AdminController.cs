@@ -8,7 +8,7 @@ namespace BloodDonationSupportSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "1")] // Admin role
+    [Authorize(Roles = "3")] // Admin role
     public class AdminController : ControllerBase
     {
         private readonly IBloodService _bloodService;
@@ -23,6 +23,7 @@ namespace BloodDonationSupportSystem.Controllers
         // ======== DONATION ========
 
         [HttpGet("donations")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> GetAllDonations()
         {
             var result = await _bloodService.GetAllDonationsForAdmin();
@@ -30,6 +31,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("donations/search")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> SearchDonations([FromQuery] string? bloodGroup, [FromQuery] string? status)
         {
             var result = await _bloodService.SearchDonations(bloodGroup, status);
@@ -37,6 +39,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPut("donations/{id}/status")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> UpdateDonationStatus(int id, [FromBody] string newStatus)
         {
             var success = await _bloodService.UpdateDonationStatusAsync(id, newStatus);
@@ -47,6 +50,7 @@ namespace BloodDonationSupportSystem.Controllers
         // ======== REQUEST ========
 
         [HttpGet("requests")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> GetAllRequests()
         {
             var result = await _bloodService.GetAllRequestsForAdmin();
@@ -54,6 +58,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("requests/search")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> SearchRequests([FromQuery] string? bloodGroup, [FromQuery] string? status)
         {
             var result = await _bloodService.SearchRequests(bloodGroup, status);
@@ -61,6 +66,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPut("requests/{id}/status")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> UpdateRequestStatus(int id, [FromBody] string newStatus)
         {
             var success = await _bloodService.UpdateRequestStatusAsync(id, newStatus);
@@ -71,6 +77,7 @@ namespace BloodDonationSupportSystem.Controllers
         // ======== USER MANAGEMENT ========
 
         [HttpGet("users")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -94,6 +101,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("user/{id}")]
+        [Authorize(Roles = "2,3")]
         public async Task<IActionResult> GetUserDetailById(int id)
         {
             var users = await _userService.GetUserDetailByIdAsync(id);

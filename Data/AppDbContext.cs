@@ -147,19 +147,16 @@ public partial class AppDbContext : DbContext
             entity.HasIndex(e => e.CreatedBy, "created_by");
 
             entity.Property(e => e.FeedbackId).HasColumnName("feedback_id");
-            entity.Property(e => e.Content)
-                .HasColumnType("text")
-                .HasColumnName("content");
+            entity.Property(e => e.Content).HasColumnType("text").HasColumnName("content");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.FeedbackType)
-                .HasMaxLength(50)
-                .HasColumnName("feedback_type");
-            entity.Property(e => e.ReportDate).HasColumnName("report_date");
+            entity.Property(e => e.FeedbackDate).HasColumnName("report_date");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Feedbacks)
+            entity.HasOne(d => d.CreatedByNavigation)
+                .WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.CreatedBy)
                 .HasConstraintName("feedbacks_ibfk_1");
         });
+
 
         modelBuilder.Entity<Notification>(entity =>
         {
@@ -173,17 +170,10 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.NotificationId).HasColumnName("notification_id");
             entity.Property(e => e.EventId).HasColumnName("event_id");
-            entity.Property(e => e.IsActionRequired)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("is_action_required");
             entity.Property(e => e.Message)
                 .HasColumnType("text")
                 .HasColumnName("message");
             entity.Property(e => e.NotifDate).HasColumnName("notif_date");
-            entity.Property(e => e.ResponseStatus)
-                .HasDefaultValueSql("'pending'")
-                .HasColumnType("enum('pending','accepted','declined')")
-                .HasColumnName("response_status");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Event).WithMany(p => p.Notifications)
@@ -214,8 +204,6 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Gender)
                 .HasMaxLength(10)
                 .HasColumnName("gender");
-            entity.Property(e => e.LastDonationDate).HasColumnName("last_donation_date");
-            entity.Property(e => e.LastReceivedDate).HasColumnName("last_received_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithOne(p => p.Profile)
