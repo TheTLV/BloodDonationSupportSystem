@@ -8,7 +8,7 @@ namespace BloodDonationSupportSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "3")] // Admin role
+    [Authorize(Roles = "2,3")] // Admin role
     public class AdminController : ControllerBase
     {
         private readonly IBloodService _bloodService;
@@ -85,6 +85,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpDelete("users/{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var success = await _userService.DeleteUserAsync(id);
@@ -93,6 +94,7 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPut("users/{id}/role")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateUserRole(int id, [FromBody] int newRoleId)
         {
             var success = await _userService.UpdateUserRoleAsync(id, newRoleId);
