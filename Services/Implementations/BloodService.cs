@@ -54,6 +54,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 .Where(d => d.UserId == userId)
                 .Select(d => new DonationViewDTO
                 {
+                    Id = d.DonationId,
                     BloodGroup = d.BloodGroup,
                     Status = d.Status,
                     Quantity = d.Quantity,
@@ -71,6 +72,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 .Where(r => r.UserId == userId)
                 .Select(r => new RequestsViewDTO
                 {
+                    Id = r.RequestId,
                     BloodGroup = r.BloodGroup,
                     Status = r.Status,
                     Quantity = r.Quantity,
@@ -168,8 +170,6 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 })
                 .ToListAsync();
         }
-
-
 
 
         public async Task<IEnumerable<AdminRequestsViewAllDTO>> GetAllRequestsForAdmin()

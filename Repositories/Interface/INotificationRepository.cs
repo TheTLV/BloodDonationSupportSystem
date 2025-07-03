@@ -7,6 +7,8 @@ namespace BloodDonationSupportSystem.Repositories.Interface
         void CreateNotification(Notification notification);
         List<Notification> GetAllNotifications();
         List<Notification> GetNotificationsByUserId(int userId);
+        bool DeleteNotification(int id);
+        Notification? GetById(int id);
     }
 
 }

@@ -7,6 +7,7 @@ namespace BloodDonationSupportSystem.Services.Interfaces
         void CreateNotification(NotificationCreateDTO dto, int? userId =null);
         List<NotificationViewDTO> GetAllNotifications();
         List<NotificationViewDTO> GetNotificationsByUser(int userId);
+        bool DeleteNotification(int id);
     }
 
 }

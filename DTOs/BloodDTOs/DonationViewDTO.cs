@@ -2,7 +2,7 @@
 {
     public class DonationViewDTO
     {
-
+        public int Id { get; set; }
         public string? BloodGroup { get; set; }
 
         public string? Status { get; set; }

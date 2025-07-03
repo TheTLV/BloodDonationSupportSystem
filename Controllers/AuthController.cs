@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Numerics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using BloodDonationSupportSystem.DTOs.AuthDTOs;
 using BloodDonationSupportSystem.Models;
@@ -27,11 +28,11 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserRegisterDTO dto)
+        public async Task<IActionResult> Register([FromBody] UserRegisterDTO dto)
         {
             try
             {
-                var user = _authService.Register(dto);
+                var user = await _authService.Register(dto);
                 var token = _jwtService.GenerateToken(user); 
 
                 return Ok(new
@@ -56,15 +57,11 @@ namespace BloodDonationSupportSystem.Controllers
 
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginDTO dto)
+        public async Task<IActionResult> Login([FromBody] UserLoginDTO dto)
         {
-            // B2: Auth service kiểm tra đăng nhập
-            var user = _authService.Login(dto); // ← dùng dto ở đây
-
-            // B3: Nếu đúng → sinh token từ User
+            var user = await _authService.Login(dto);
             var token = _jwtService.GenerateToken(user);
 
-            // B4: Trả LoginResultDTO về
             var result = new LoginResultDTO
             {
                 UserId = user.UserId,

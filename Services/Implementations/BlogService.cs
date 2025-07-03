@@ -1,6 +1,7 @@
 ﻿using BloodDonationSupportSystem.Data;
 using BloodDonationSupportSystem.DTOs.BlogDTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Repositories.Interface;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +9,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class BlogService : IBlogService
     {
-        private readonly AppDbContext _context;
+        private readonly IBlogRepository _repo;
 
-        public BlogService(AppDbContext context)
+        public BlogService(IBlogRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public async Task<int> CreateBlogAsync(BlogCreateDTO dto)
@@ -25,14 +26,12 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 Description = dto.Description
             };
 
-            _context.Blogs.Add(blog);
-            await _context.SaveChangesAsync();
-            return blog.BlogId;
+            return await _repo.CreateAsync(blog);
         }
 
         public async Task<bool> UpdateBlogAsync(int blogId, BlogUpdateDTO dto)
         {
-            var blog = await _context.Blogs.FindAsync(blogId);
+            var blog = await _repo.GetByIdAsync(blogId);
             if (blog == null) return false;
 
             blog.Title = dto.Title ?? blog.Title;
@@ -40,22 +39,17 @@ namespace BloodDonationSupportSystem.Services.Implementations
             blog.Link = dto.Link ?? blog.Link;
             blog.Description = dto.Description ?? blog.Description;
 
-            _context.Blogs.Update(blog);
-            return await _context.SaveChangesAsync() > 0;
+            return await _repo.UpdateAsync(blog);
         }
 
         public async Task<bool> DeleteBlogAsync(int blogId)
         {
-            var blog = await _context.Blogs.FindAsync(blogId);
-            if (blog == null) return false;
-
-            _context.Blogs.Remove(blog);
-            return await _context.SaveChangesAsync() > 0;
+            return await _repo.DeleteAsync(blogId);
         }
 
         public async Task<BlogDetailDTO?> GetBlogByIdAsync(int blogId)
         {
-            var blog = await _context.Blogs.FindAsync(blogId);
+            var blog = await _repo.GetByIdAsync(blogId);
             if (blog == null) return null;
 
             return new BlogDetailDTO
@@ -70,31 +64,29 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<BlogDetailDTO>> GetAllBlogsAsync()
         {
-            return await _context.Blogs
-                .Select(b => new BlogDetailDTO
-                {
-                    BlogId = b.BlogId,
-                    Title = b.Title,
-                    Image = b.Image,
-                    Link = b.Link,
-                    Description = b.Description
-                }).ToListAsync();
+            var blogs = await _repo.GetAllAsync();
+            return blogs.Select(b => new BlogDetailDTO
+            {
+                BlogId = b.BlogId,
+                Title = b.Title,
+                Image = b.Image,
+                Link = b.Link,
+                Description = b.Description
+            });
         }
 
         public async Task<IEnumerable<BlogDetailDTO>> SearchBlogsByTitleOrDesAsync(string keyword)
         {
-            return await _context.Blogs
-                .Where(b =>
-                    b.Title.Contains(keyword) ||
-                    b.Description.Contains(keyword))
-                .Select(b => new BlogDetailDTO
-                {
-                    BlogId = b.BlogId,
-                    Title = b.Title,
-                    Image = b.Image,
-                    Link = b.Link,
-                    Description = b.Description
-                }).ToListAsync();
+            var blogs = await _repo.SearchAsync(keyword);
+            return blogs.Select(b => new BlogDetailDTO
+            {
+                BlogId = b.BlogId,
+                Title = b.Title,
+                Image = b.Image,
+                Link = b.Link,
+                Description = b.Description
+            });
         }
     }
+
 }

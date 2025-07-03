@@ -8,6 +8,7 @@ using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using BloodDonationSupportSystem.Helpers;
 
 namespace BloodDonationSupportSystem
 {
@@ -32,7 +33,13 @@ namespace BloodDonationSupportSystem
                 ));
 
             // ========= Controllers + Swagger =========
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new NullableDateOnlyJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new NullableTimeOnlyJsonConverter());
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -66,16 +73,21 @@ namespace BloodDonationSupportSystem
             });
 
             // ========= Dependency Injection =========
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+            builder.Services.AddScoped<IBlogRepository, BlogRepository>();
             builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-            builder.Services.AddScoped<IFeedbackService, FeedbackService>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
-            builder.Services.AddScoped<IEventService, EventService>();
+
             builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+            builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IBloodService, BloodService>();
             builder.Services.AddScoped<IBlogService, BlogService>();
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddSingleton<JwtService>();
 
             // ========= CORS =========

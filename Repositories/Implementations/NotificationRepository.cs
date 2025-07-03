@@ -33,5 +33,18 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
                 .OrderByDescending(n => n.NotifDate)
                 .ToList();
         }
+
+        public bool DeleteNotification(int id)
+        {
+            var noti = _context.Notifications.Find(id);
+            if (noti == null) return false;
+
+            _context.Notifications.Remove(noti);
+            return _context.SaveChanges() > 0;
+        }
+        public Notification? GetById(int id)
+        {
+            return _context.Notifications.FirstOrDefault(e => e.NotificationId == id);
+        }
     }
 }

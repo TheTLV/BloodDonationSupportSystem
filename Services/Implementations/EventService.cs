@@ -33,7 +33,7 @@ namespace BloodDonationSupportSystem.Services
 
             _notificationService.CreateNotification(new NotificationCreateDTO
             {
-                Message = $"Sự kiện mới: \"{dto.Title}\" sẽ diễn ra vào ngày {dto.EventDate:dd/MM/yyyy}",
+                Message = $"Sự kiện mới: {dto.Title} sẽ diễn ra vào ngày {dto.EventDate:dd/MM/yyyy}",
                 EventId = id
             });
 
@@ -53,7 +53,7 @@ namespace BloodDonationSupportSystem.Services
             {
                 _notificationService.CreateNotification(new NotificationCreateDTO
                 {
-                    Message = $"Sự kiện \"{dto.Title}\" đã được cập nhật (ngày {dto.EventDate:dd/MM/yyyy})",
+                    Message = $"Sự kiện {dto.Title} đã được cập nhật (ngày {dto.EventDate:dd/MM/yyyy})",
                     EventId = id
                 });
             }
@@ -71,8 +71,7 @@ namespace BloodDonationSupportSystem.Services
             {
                 _notificationService.CreateNotification(new NotificationCreateDTO
                 {
-                    Message = $"Sự kiện \"{ev.Title}\" đã bị xóa",
-                    EventId = id,
+                    Message = $"Sự kiện {ev.Title} đã bị xóa"
                 });
             }
 

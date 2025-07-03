@@ -178,6 +178,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Event).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.EventId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("notifications_ibfk_2");
 
             entity.HasOne(d => d.User).WithMany(p => p.Notifications)

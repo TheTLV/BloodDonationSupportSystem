@@ -5,7 +5,7 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface IAuthService
     {
-        User Login(UserLoginDTO dto);
-        User Register(UserRegisterDTO dto);
+        Task<User> Login(UserLoginDTO dto);
+        Task<User> Register(UserRegisterDTO dto);
     }
 }

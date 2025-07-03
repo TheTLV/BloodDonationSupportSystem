@@ -7,9 +7,8 @@ namespace BloodDonationSupportSystem.Services.Interfaces
     {
         Task<UserDetailDTO> GetOwnProfileAsync(int userId);
         Task<ProfileUpdateDTO> UpdateMyProfileAsync(int userId, ProfileUpdateDTO dto);
-        void UpdateMyDonation(int id, DonationUpdateDTO dto, int userId);
-
-        void UpdateMyBloodRequest(RequestUpdateDTO dto, int userId);
+        Task UpdateMyDonationAsync(int donationId, DonationUpdateDTO dto, int userId);
+        Task UpdateMyBloodRequestAsync(RequestUpdateDTO dto, int userId);
         Task<bool> DeleteMyBloodRequestAsync(int requestId, int userId);
         Task<bool> DeleteMyDonationAsync(int donationId, int userId);
 

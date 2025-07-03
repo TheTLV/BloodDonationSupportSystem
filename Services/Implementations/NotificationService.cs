@@ -28,6 +28,15 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _notificationRepo.CreateNotification(notif);
         }
 
+        public bool DeleteNotification(int id)
+        {
+            
+            var ev = _notificationRepo.GetById(id);
+            if (ev == null) return false;
+
+            var success = _notificationRepo.DeleteNotification(id);
+            return success;
+        }
         
 
         public List<NotificationViewDTO> GetAllNotifications()

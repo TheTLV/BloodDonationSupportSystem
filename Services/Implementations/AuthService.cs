@@ -1,10 +1,12 @@
 ﻿using System.Net;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using BloodDonationSupportSystem.Data;
 using BloodDonationSupportSystem.DTOs;
 using BloodDonationSupportSystem.DTOs.AuthDTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Repositories.Interface;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,31 +14,18 @@ namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly AppDbContext _context;
-        public AuthService(AppDbContext context)
+        private readonly IUserRepository _userRepo;
+        private readonly IProfileRepository _profileRepo;
+
+        public AuthService(IUserRepository userRepo, IProfileRepository profileRepo)
         {
-            _context = context;
+            _userRepo = userRepo;
+            _profileRepo = profileRepo;
         }
 
-        //public User Login(string email, string password)
-        //{
-        //    var user = _context.Users
-        //        .Include(u => u.Role!)
-        //        .FirstOrDefault(u => u.Email == email && u.Password == password);
-
-        //    if (user == null)
-        //        throw new Exception("Sai email hoặc mật khẩu!");
-
-        //    if (user.Role == null)
-        //        throw new Exception("Role bị null nhaaa");
-
-        //    return user;
-        //}
-        public User Login(UserLoginDTO dto)
+        public async Task<User> Login(UserLoginDTO dto)
         {
-            var user = _context.Users
-                .Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == dto.Email && u.Password == dto.Password);
+            var user = await _userRepo.GetByEmailAndPassword(dto.Email, dto.Password);
 
             if (user == null)
                 throw new Exception("Sai tài khoản hoặc mật khẩu");
@@ -44,48 +33,26 @@ namespace BloodDonationSupportSystem.Services.Implementations
             if (user.Role == null)
                 throw new Exception("User không có Role, dữ liệu sai");
 
-            return user; 
+            return user;
         }
 
 
 
-        //public User Register(string name, string email, string password, string? phone, string gender, DateOnly dob, string address)
-        //{
-        //    var existingUser = _context.Users.FirstOrDefault(u => u.Email == email);
-        //    if (existingUser != null)
-        //        throw new Exception("Email đã được sử dụng");
-
-        //    var user = new User
-        //    {
-        //        Fullname = name,
-        //        Email = email,
-        //        Password = password, 
-        //        PhoneNumber = phone,
-        //        RoleId = 1 
-        //    };
-
-        //    var profile = new Profile
-        //    {
-        //        User = user,
-        //        Gender = gender,
-        //        Address = address,
-        //        DateOfBirth = dob
-        //    };
-
-        //    _context.Users.Add(user);
-        //    _context.Profiles.Add(profile);
-        //    _context.SaveChanges();
-
-        //    return user;
-        //}
-
-        public User Register(UserRegisterDTO dto)
+        public async Task<User> Register(UserRegisterDTO dto)
         {
-            var existingUser = _context.Users.FirstOrDefault(u => u.Email == dto.Email);
-            var exitstingPhone = _context.Users.FirstOrDefault(u => u.PhoneNumber == dto.PhoneNumber);
-            if (existingUser != null || exitstingPhone != null)
-                throw new Exception("Email hoặc số điện thoại đã được sử dụng");
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new Exception("Email không được để trống");
 
+            var existingEmail = await _userRepo.GetByEmailAsync(dto.Email);
+            if (existingEmail != null)
+                throw new Exception("Email đã được sử dụng");
+
+            if (!string.IsNullOrWhiteSpace(dto.PhoneNumber))
+            {
+                var existingPhone = await _userRepo.GetByPhoneAsync(dto.PhoneNumber!);
+                if (existingPhone != null)
+                    throw new Exception("Số điện thoại đã được sử dụng");
+            }
             var user = new User
             {
                 Fullname = dto.Name,
@@ -103,9 +70,8 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 DateOfBirth = dto.DateOfBirth
             };
 
-            _context.Users.Add(user);
-            _context.Profiles.Add(profile);
-            _context.SaveChanges();
+            await _userRepo.AddUserAsync(user);         
+            _profileRepo.AddProfile(profile); 
 
             return user;
         }

@@ -1,4 +1,5 @@
-﻿using BloodDonationSupportSystem.DTOs.BloodDTO;
+﻿using System.Threading.Tasks;
+using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.DTOs.UsersDTOs;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -81,11 +82,11 @@ namespace BloodDonationSupportSystem.Controllers
 
 
         [HttpPut("updateDonation/{id}")]
-        public IActionResult UpdateMyDonation(int id, [FromBody] DonationUpdateDTO dto)
+        public async Task<IActionResult> UpdateMyDonation(int id, [FromBody] DonationUpdateDTO dto)
         {
             try
             {
-                _userService.UpdateMyDonation(id, dto, userId); // Truyền ID riêng
+                await _userService.UpdateMyDonationAsync(id, dto, userId); 
                 return Ok(new { message = "Cập nhật yêu cầu hiến máu thành công" });
             }
             catch (Exception ex)
@@ -114,11 +115,11 @@ namespace BloodDonationSupportSystem.Controllers
 
 
         [HttpPut("updateRequest/{id}")]
-        public IActionResult UpdateMyBloodRequest([FromBody] RequestUpdateDTO dto)
+        public async Task<IActionResult> UpdateMyBloodRequest([FromBody] RequestUpdateDTO dto)
         {
             try
             {
-                _userService.UpdateMyBloodRequest(dto, userId);
+                await _userService.UpdateMyBloodRequestAsync(dto, userId);
                 return Ok(new { message = "Cập nhật yêu cầu xin máu thành công" });
             }
             catch (Exception ex)

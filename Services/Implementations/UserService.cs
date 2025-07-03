@@ -2,6 +2,7 @@
 using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.DTOs.UsersDTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Repositories.Interface;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,70 +10,62 @@ namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class UserService : IUserService
     {
-        private readonly AppDbContext _context;
-        public UserService(AppDbContext context)
+        private readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository)
         {
-            _context = context;
+            _userRepository = userRepository;
         }
 
-
-        public void UpdateMyBloodRequest(RequestUpdateDTO dto, int userId)
+        public async Task UpdateMyBloodRequestAsync(RequestUpdateDTO dto, int userId)
         {
-            var request = _context.Bloodrequests.FirstOrDefault(r => r.RequestId == dto.RequestId && r.UserId == userId);
+            var request = await _userRepository.GetRequestByIdAndUserAsync(dto.RequestId, userId);
             if (request == null)
                 throw new Exception("Request not found or access denied");
+
             request.Quantity = dto.Quantity ?? request.Quantity;
             request.RequestDate = dto.RequestDate ?? request.RequestDate;
             request.RequestTime = dto.RequestTime ?? request.RequestTime;
-            _context.SaveChanges();
+
+            await _userRepository.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteMyBloodRequestAsync(int requestId, int userId)
         {
-            var request = await _context.Bloodrequests
-                .FirstOrDefaultAsync(r => r.RequestId == requestId && r.UserId == userId);
+            var request = await _userRepository.GetRequestByIdAndUserAsync(requestId, userId);
+            if (request == null) return false;
 
-            if (request == null)
-                return false;
-
-            _context.Bloodrequests.Remove(request);
-            await _context.SaveChangesAsync();
+            _userRepository.RemoveBloodRequest(request);
+            await _userRepository.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DeleteMyDonationAsync(int donationId, int userId)
         {
-            var donation = await _context.Donations
-                .FirstOrDefaultAsync(d => d.DonationId == donationId && d.UserId == userId);
+            var donation = await _userRepository.GetDonationByIdAndUserAsync(donationId, userId);
+            if (donation == null) return false;
 
-            if (donation == null)
-                return false;
-
-            _context.Donations.Remove(donation);
-            await _context.SaveChangesAsync();
+            _userRepository.RemoveDonation(donation);
+            await _userRepository.SaveChangesAsync();
             return true;
         }
 
-        public void UpdateMyDonation(int donationId, DonationUpdateDTO dto, int userId)
+        public async Task UpdateMyDonationAsync(int donationId, DonationUpdateDTO dto, int userId)
         {
-            var donation = _context.Donations.FirstOrDefault(d => d.DonationId == donationId && d.UserId == userId);
+            var donation = await _userRepository.GetDonationByIdAndUserAsync(donationId, userId);
             if (donation == null)
                 throw new Exception("Donation not found or access denied");
 
             donation.Quantity = dto.Quantity ?? donation.Quantity;
             donation.DonationDate = dto.DonationDate ?? donation.DonationDate;
             donation.DonationTime = dto.DonationTime ?? donation.DonationTime;
-            _context.SaveChanges();
-        }
 
+            await _userRepository.SaveChangesAsync();
+        }
 
         public async Task<UserDetailDTO> GetOwnProfileAsync(int userId)
         {
-            var user = await _context.Users
-                .Include(u => u.Role)
-                .Include(u => u.Profile)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
-
+            var user = await _userRepository.GetUserWithRoleAndProfileAsync(userId);
             if (user == null)
                 throw new Exception("User not found");
 
@@ -89,13 +82,9 @@ namespace BloodDonationSupportSystem.Services.Implementations
             };
         }
 
-
         public async Task<ProfileUpdateDTO> UpdateMyProfileAsync(int userId, ProfileUpdateDTO dto)
         {
-            var user = await _context.Users
-                .Include(u => u.Profile)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
-
+            var user = await _userRepository.GetUserWithProfileAsync(userId);
             if (user == null)
                 throw new Exception("User not found");
 
@@ -105,7 +94,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
             if (user.Profile == null)
             {
                 user.Profile = new Profile { UserId = userId };
-                _context.Profiles.Add(user.Profile);
+                _userRepository.AddProfile(user.Profile);
             }
 
             user.Profile.Address = dto.Address ?? user.Profile.Address;
@@ -113,7 +102,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
             user.Profile.BloodGroup = dto.BloodGroup ?? user.Profile.BloodGroup;
             user.Profile.DateOfBirth = dto.DateOfBirth ?? user.Profile.DateOfBirth;
 
-            await _context.SaveChangesAsync();
+            await _userRepository.SaveChangesAsync();
             return new ProfileUpdateDTO
             {
                 Fullname = user.Fullname,
@@ -128,47 +117,31 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<UserViewDTO>> GetAllUsersAsync()
         {
-            return await _context.Users
-                .Include(u => u.Role)
-                .Select(u => new UserViewDTO
-                {
-                    UserId = u.UserId,
-                    Fullname = u.Fullname,
-                    Email = u.Email,
-                    BloodGroup = u.Profile.BloodGroup,
-                    PhoneNumber = u.PhoneNumber,
-                    RoleName = u.Role.RoleName
-                })
-                .ToListAsync();
+            var users = await _userRepository.GetAllUsersAsync();
+            return users.Select(u => new UserViewDTO
+            {
+                UserId = u.UserId,
+                Fullname = u.Fullname,
+                Email = u.Email,
+                BloodGroup = u.Profile?.BloodGroup,
+                PhoneNumber = u.PhoneNumber,
+                RoleName = u.Role?.RoleName ?? "Unknown"
+            });
         }
 
         public async Task<bool> DeleteUserAsync(int userId)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null) return false;
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return true;
+            return await _userRepository.DeleteUserAsync(userId);
         }
 
         public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
         {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null) return false;
-
-            user.RoleId = newRoleId;
-            await _context.SaveChangesAsync();
-            return true;
+            return await _userRepository.UpdateUserRoleAsync(userId, newRoleId);
         }
 
         public async Task<UserDetailDTO> GetUserDetailByIdAsync(int userId)
         {
-            var user = await _context.Users
-                .Include(u => u.Role)
-                .Include(u => u.Profile)
-                .FirstOrDefaultAsync(u => u.UserId == userId);
-
+            var user = await _userRepository.GetUserWithRoleAndProfileAsync(userId);
             if (user == null)
                 throw new Exception("User not found");
 
