@@ -29,7 +29,7 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
         public List<Notification> GetNotificationsByUserId(int userId)
         {
             return _context.Notifications
-                .Where(n => n.UserId == userId)
+                .Where(n => n.UserId == userId || n.UserId == null)
                 .OrderByDescending(n => n.NotifDate)
                 .ToList();
         }
