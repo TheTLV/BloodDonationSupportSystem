@@ -45,7 +45,8 @@ namespace BloodDonationSupportSystem.Controllers
                         user.Fullname,
                         user.Email,
                         user.PhoneNumber,
-                        Role= 1
+                        Role= 1,
+                        StatusId = 1 
                     }
                 });
             }
@@ -59,21 +60,29 @@ namespace BloodDonationSupportSystem.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO dto)
         {
-            var user = await _authService.Login(dto);
-            var token = _jwtService.GenerateToken(user);
-
-            var result = new LoginResultDTO
+            try
             {
-                UserId = user.UserId,
-                Name = user.Fullname,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                Role = user.Role?.RoleName ?? "Unknown",
-                Token = token
-            };
+                var user = await _authService.Login(dto);
+                var token = _jwtService.GenerateToken(user);
 
-            return Ok(result);
+                var result = new LoginResultDTO
+                {
+                    UserId = user.UserId,
+                    Name = user.Fullname,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Role = user.Role?.RoleName ?? "Unknown",
+                    Token = token
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
 
 
 

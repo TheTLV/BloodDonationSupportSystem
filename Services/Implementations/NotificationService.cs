@@ -15,14 +15,27 @@ namespace BloodDonationSupportSystem.Services.Implementations
             _notificationRepo = notificationRepo;
         }
 
-        public void CreateNotification(NotificationCreateDTO dto , int? userId=null)
+        public void EventCreateNotification(EventNotificationCreateDTO dto )
         {
             var notif = new Notification
             {
                 Message = dto.Message,
                 EventId = dto.EventId,
-                UserId = userId,
+                UserId = null,
                 NotifDate = DateOnly.FromDateTime(DateTime.Today)
+            };
+
+            _notificationRepo.CreateNotification(notif);
+        }
+
+        public void AdimnCreateNotification(AdminNotificationCreateDTO dto)
+        {
+            var notif = new Notification
+            {
+                Message = dto.Message,
+                UserId = dto.UserId,
+                NotifDate = DateOnly.FromDateTime(DateTime.Today),
+                EventId = null 
             };
 
             _notificationRepo.CreateNotification(notif);

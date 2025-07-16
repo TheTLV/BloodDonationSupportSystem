@@ -18,8 +18,10 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
         {
             return await _context.Users
                 .Include(u => u.Role)
+                .Include(u => u.Status) 
                 .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
+
 
 
 
@@ -55,18 +57,21 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
         {
             return await _context.Users
                 .Include(u => u.Role)
+                .Include(u => u.Status)
                 .Include(u => u.Profile)
                 .ToListAsync();
         }
 
-        public async Task<bool> DeleteUserAsync(int userId)
+        public async Task<bool> UpdateUserStatusAsync(int userId, int newStatusId)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return false;
 
-            _context.Users.Remove(user);
-            return await _context.SaveChangesAsync() > 0;
+            user.StatusId = newStatusId;
+            await _context.SaveChangesAsync();
+            return true;
         }
+
 
         public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
         {

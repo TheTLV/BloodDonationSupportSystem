@@ -12,5 +12,9 @@
         public DateOnly? DateOfBirth { get; set; }
         public DateOnly? DonationDate { get; set; }
         public TimeOnly? DonationTime { get; set; }
+        public int? Height { get; set; }
+        public int? Weight { get; set; }
+        public string? ChronicDisease { get; set; }
+        public string? Medication { get; set; }
     }
 }

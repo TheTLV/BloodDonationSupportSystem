@@ -13,7 +13,7 @@ namespace BloodDonationSupportSystem.Repositories.Interface
         Task<User?> GetUserWithProfileAsync(int userId);
         Task<User?> GetUserWithRoleAndProfileAsync(int userId);
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> UpdateUserStatusAsync(int userId,int newStatusId);
         Task<bool> UpdateUserRoleAsync(int userId, int newRoleId);
 
         Task<Bloodrequest?> GetRequestByIdAndUserAsync(int requestId, int userId);

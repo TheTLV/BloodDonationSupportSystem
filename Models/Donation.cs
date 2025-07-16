@@ -18,6 +18,12 @@ public partial class Donation
     public DateOnly DonationDate { get; set; }
 
     public TimeOnly DonationTime { get; set; }
+    public int? Height { get; set; }
+    public int? Weight { get; set; }
+    public string? ChronicDisease { get; set; }
+    public string? Medication { get; set; }
+    public DateOnly? LastDonationDate { get; set; }
+
 
     public virtual User? User { get; set; }
 }

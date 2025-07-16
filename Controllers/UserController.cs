@@ -32,21 +32,21 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPost("donate")]
-        public IActionResult Donate([FromBody] BloodDonationDTO dto)
+        public async Task<IActionResult> Donate([FromBody] BloodDonationDTO dto)
         {
-
-            var success = _bloodService.CreateDonation(userId, dto);
+            var success = await _bloodService.CreateDonationAsync(userId, dto);
             if (!success) return BadRequest(new { message = "Lỗi tạo yêu cầu hiến máu" });
             return Ok(new { message = "Gửi yêu cầu hiến máu thành công" });
         }
 
         [HttpPost("request")]
-        public IActionResult RequestBlood([FromBody] BloodRequestDTO dto)
+        public async Task<IActionResult> RequestBlood([FromBody] BloodRequestDTO dto)
         {
-            var success = _bloodService.CreateRequest(userId, dto);
+            var success = await _bloodService.CreateRequestAsync(userId, dto);
             if (!success) return BadRequest(new { message = "Lỗi gửi yêu cầu xin máu" });
             return Ok(new { message = "Gửi yêu cầu xin máu thành công" });
         }
+
 
         [HttpGet("donations")]
         public IActionResult GetDonations()

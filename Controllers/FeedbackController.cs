@@ -12,7 +12,7 @@
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackService _feedbackService;
-        private int userId => GetUserIdFromToken();
+        private int UId => GetUserIdFromToken();
         private int GetUserIdFromToken()
         {
             var userIdClaim = User.FindFirst("UserId");
@@ -35,7 +35,7 @@
                 if (string.IsNullOrWhiteSpace(dto.Content))
                     return BadRequest("Nội dung không được để trống.");
 
-                _feedbackService.SendFeedback(userId, dto); 
+                _feedbackService.SendFeedback(UId, dto); 
                 return Ok(new { message = "Gửi feedback thành công!" });
             }
             catch (Exception ex)

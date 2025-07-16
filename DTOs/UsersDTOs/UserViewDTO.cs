@@ -8,5 +8,6 @@
         public string? BloodGroup { get; set; }
         public string? PhoneNumber { get; set; }
         public string RoleName { get; set; } = null!;
+        public string Status { get; set; } = null!;
     }
 }

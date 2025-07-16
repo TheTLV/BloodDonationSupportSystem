@@ -7,7 +7,7 @@ public partial class Feedback
 {
     public int FeedbackId { get; set; }
 
-    public int CreatedBy { get; set; }
+    public int? CreatedBy { get; set; }
 
     public string? Content { get; set; }
 

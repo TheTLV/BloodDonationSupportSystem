@@ -6,12 +6,12 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface IBloodService
     {
-        bool CreateDonation(int userId, BloodDonationDTO dto);
+        Task<bool> CreateDonationAsync(int userId, BloodDonationDTO dto);
         IEnumerable<DonationViewDTO> GetDonationsByUserId(int userId);
         Task<DonateDetailDTO> GetDonate(int id);
         Task<RequestDetailDTO> GetRequest(int id);
 
-        bool CreateRequest(int userId , BloodRequestDTO dto);
+        Task<bool> CreateRequestAsync(int userId, BloodRequestDTO dto);
         IEnumerable<RequestsViewDTO> GetRequestsByUserId(int userId);
 
         // --- Admin Functions ---

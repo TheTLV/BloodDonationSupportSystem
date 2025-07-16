@@ -29,6 +29,9 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
             if (user == null)
                 throw new Exception("Sai tài khoản hoặc mật khẩu");
+            
+            if (user.StatusId != 1) 
+                throw new Exception($"Tài khoản không được phép đăng nhập: {user.Status?.StatusName ?? "Không rõ lý do"}");
 
             if (user.Role == null)
                 throw new Exception("User không có Role, dữ liệu sai");

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace BloodDonationSupportSystem.Models;
 
-public partial class Role
+public partial class AccountStatus
 {
-    public int Rid { get; set; }
+    public int StatusId { get; set; }
 
-    public string? RoleName { get; set; }
+    public string StatusName { get; set; } = null!;
 
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

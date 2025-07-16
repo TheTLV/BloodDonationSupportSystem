@@ -2,6 +2,7 @@
 using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.DTOs.BloodDTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Repositories.Interface;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,14 +10,16 @@ namespace BloodDonationSupportSystem.Services.Implementations
 {
     public class BloodService : IBloodService
     {
-        private readonly AppDbContext _context;
+        private readonly IDonationRepository _donationRepo;
+        private readonly IBloodRequestRepository _requestRepo;
 
-        public BloodService(AppDbContext context)
+        public BloodService(IDonationRepository donationRepo, IBloodRequestRepository requestRepo)
         {
-            _context = context;
+            _donationRepo = donationRepo;
+            _requestRepo = requestRepo;
         }
 
-        public bool CreateRequest(int userId, BloodRequestDTO dto)
+        public async Task<bool> CreateRequestAsync(int userId, BloodRequestDTO dto)
         {
             var request = new Bloodrequest
             {
@@ -25,14 +28,14 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 Quantity = dto.Quantity,
                 RequestDate = dto.RequestDate,
                 RequestTime = dto.RequestTime,
-                Status = "pending" 
+                Status = "Chờ duyệt"
             };
 
-            _context.Bloodrequests.Add(request);
-            return _context.SaveChanges() > 0;
+            _requestRepo.Add(request);
+            return await _requestRepo.SaveChangesAsync();
         }
 
-        public bool CreateDonation(int userId ,BloodDonationDTO dto)
+        public async Task<bool> CreateDonationAsync(int userId ,BloodDonationDTO dto)
         {
             var donation = new Donation
             {
@@ -41,16 +44,21 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 Quantity = dto.Quantity,
                 DonationDate = dto.DonationDate,
                 DonationTime = dto.DonationTime,
-                Status = "pending"
+                Status = "Chờ duyệt",
+                Height = dto.Height,
+                Weight = dto.Weight,
+                ChronicDisease = dto.ChronicDisease,
+                Medication = dto.Medication,
+                LastDonationDate = dto.LastDonationDate
             };
 
-            _context.Donations.Add(donation);
-            return _context.SaveChanges() > 0;
+            _donationRepo.Add(donation);
+            return await _donationRepo.SaveChangesAsync();
         }
 
         public IEnumerable<DonationViewDTO> GetDonationsByUserId(int userId)
         {
-            var donations = _context.Donations
+            return _donationRepo.GetAll()
                 .Where(d => d.UserId == userId)
                 .Select(d => new DonationViewDTO
                 {
@@ -62,13 +70,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
                     DonationTime = d.DonationTime
                 })
                 .ToList();
-
-            return donations;
         }
 
         public IEnumerable<RequestsViewDTO> GetRequestsByUserId(int userId)
         {
-            return _context.Bloodrequests
+            return _requestRepo.GetAll()
                 .Where(r => r.UserId == userId)
                 .Select(r => new RequestsViewDTO
                 {
@@ -84,7 +90,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<DonateDetailDTO> GetDonate(int id)
         {
-            var donation = await _context.Donations
+            var donation = await _donationRepo.GetAll()
                 .Where(d => d.DonationId == id)
                 .Select(d => new DonateDetailDTO
                 {
@@ -94,7 +100,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
                     Status = d.Status,
                     Quantity = d.Quantity,
                     DonationDate = d.DonationDate,
-                    DonationTime = d.DonationTime
+                    DonationTime = d.DonationTime,
+                    Height = d.Height,
+                    Weight = d.Weight,
+                    ChronicDisease = d.ChronicDisease,
+                    Medication = d.Medication
                 })
                 .FirstOrDefaultAsync();
 
@@ -107,7 +117,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<RequestDetailDTO> GetRequest(int id)
         {
-            var request = await _context.Bloodrequests
+            var request = await _requestRepo.GetAll()
                 .Where(r => r.RequestId == id)
                 .Select(r => new RequestDetailDTO
                 {
@@ -130,8 +140,8 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<AdminDonationViewAllDTO>> GetAllDonationsForAdmin()
         {
-            return await _context.Donations
-                .Include(d => d.User) // nếu cần thông tin từ User
+            return await _donationRepo.GetAll()
+                .Include(d => d.User)
                 .Select(d => new AdminDonationViewAllDTO
                 {
                     DonationId = d.DonationId,
@@ -143,7 +153,11 @@ namespace BloodDonationSupportSystem.Services.Implementations
                     Gender = d.User.Profile.Gender,
                     DateOfBirth = d.User.Profile.DateOfBirth,
                     DonationDate = d.DonationDate,
-                    DonationTime = d.DonationTime
+                    DonationTime = d.DonationTime,
+                    Height = d.Height,
+                    Weight = d.Weight,
+                    ChronicDisease = d.ChronicDisease,
+                    Medication = d.Medication
                 })
                 .ToListAsync();
         }
@@ -151,7 +165,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<DonationViewDTO>> SearchDonations(string? bloodGroup, string? status)
         {
-            var query = _context.Donations.AsQueryable();
+            var query = _donationRepo.GetAll();
 
             if (!string.IsNullOrEmpty(bloodGroup))
                 query = query.Where(d => d.BloodGroup == bloodGroup);
@@ -174,9 +188,9 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<AdminRequestsViewAllDTO>> GetAllRequestsForAdmin()
         {
-            return await _context.Bloodrequests
+            return await _requestRepo.GetAll()
                 .Include(r => r.User)
-                    .ThenInclude(u => u.Profile) // nếu Profile là 1 bảng riêng hoặc object riêng
+                    .ThenInclude(u => u.Profile)
                 .Select(r => new AdminRequestsViewAllDTO
                 {
                     RequestId = r.RequestId,
@@ -196,7 +210,7 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<IEnumerable<RequestsViewDTO>> SearchRequests(string? bloodGroup, string? status)
         {
-            var query = _context.Bloodrequests.AsQueryable();
+            var query = _requestRepo.GetAll();
 
             if (!string.IsNullOrEmpty(bloodGroup))
                 query = query.Where(r => r.BloodGroup == bloodGroup);
@@ -218,23 +232,21 @@ namespace BloodDonationSupportSystem.Services.Implementations
 
         public async Task<bool> UpdateDonationStatusAsync(int donationId, string newStatus)
         {
-            var donation = await _context.Donations.FindAsync(donationId);
+            var donation = await _donationRepo.GetByIdAsync(donationId);
             if (donation == null) return false;
 
             donation.Status = newStatus;
-            await _context.SaveChangesAsync();
-            return true;
+            return await _donationRepo.SaveChangesAsync();
         }
 
 
         public async Task<bool> UpdateRequestStatusAsync(int requestId, string newStatus)
         {
-            var bloodRequest = await _context.Bloodrequests.FindAsync(requestId);
+            var bloodRequest = await _requestRepo.GetByIdAsync(requestId);
             if (bloodRequest == null) return false;
 
             bloodRequest.Status = newStatus;
-            await _context.SaveChangesAsync();
-            return true;
+            return await _requestRepo.SaveChangesAsync();
         }
     }
 }

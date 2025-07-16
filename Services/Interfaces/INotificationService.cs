@@ -4,7 +4,8 @@ namespace BloodDonationSupportSystem.Services.Interfaces
 {
     public interface INotificationService
     {
-        void CreateNotification(NotificationCreateDTO dto, int? userId =null);
+        void EventCreateNotification(EventNotificationCreateDTO dto);
+        void AdimnCreateNotification(AdminNotificationCreateDTO dto);
         List<NotificationViewDTO> GetAllNotifications();
         List<NotificationViewDTO> GetNotificationsByUser(int userId);
         bool DeleteNotification(int id);

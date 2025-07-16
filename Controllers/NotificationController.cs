@@ -17,17 +17,22 @@ namespace BloodDonationSupportSystem.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpPost("create")]
-        [Authorize(Roles = "2,3")]
-        public IActionResult Create([FromBody] NotificationCreateDTO dto)
+        [HttpPost("sendToUser")]
+        [Authorize(Roles = "1,2")] // 1 = Admin, 2 = Staff
+        public IActionResult SendToUser([FromBody] AdminNotificationCreateDTO dto)
         {
-            int? userId = null;
-            if (User.HasClaim(c => c.Type == "UserId"))
-                userId = int.Parse(User.FindFirst("UserId")!.Value);
-
-            _notificationService.CreateNotification(dto, userId);
-            return Ok(new { message = "Tạo thông báo thành công" });
+            try
+            {
+                _notificationService.AdimnCreateNotification(dto);
+                return Ok(new { message = "Notification sent!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
+
+
 
         [HttpGet("getAll")]
         [Authorize(Roles = "1,2,3")]

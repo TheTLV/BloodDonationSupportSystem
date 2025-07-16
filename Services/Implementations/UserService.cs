@@ -125,14 +125,16 @@ namespace BloodDonationSupportSystem.Services.Implementations
                 Email = u.Email,
                 BloodGroup = u.Profile?.BloodGroup,
                 PhoneNumber = u.PhoneNumber,
-                RoleName = u.Role?.RoleName ?? "Unknown"
+                RoleName = u.Role?.RoleName ?? "Unknown",
+                Status = u.Status?.StatusName ?? "Unknown"
             });
         }
 
-        public async Task<bool> DeleteUserAsync(int userId)
+        public async Task<bool> UpdateUserStatusAsync(int userId, int newStatusId)
         {
-            return await _userRepository.DeleteUserAsync(userId);
+            return await _userRepository.UpdateUserStatusAsync(userId, newStatusId);
         }
+
 
         public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
         {

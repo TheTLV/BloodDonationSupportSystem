@@ -84,13 +84,13 @@ namespace BloodDonationSupportSystem.Controllers
             return Ok(users);
         }
 
-        [HttpDelete("users/{id}")]
+        [HttpPut("users/{id}/status")]
         [Authorize(Roles = "3")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> UpdateUserStatus(int id, [FromBody] int statusId)
         {
-            var success = await _userService.DeleteUserAsync(id);
-            if (!success) return NotFound(new { message = "Không tìm thấy người dùng" });
-            return Ok(new { message = "Xóa người dùng thành công" });
+            var result = await _userService.UpdateUserStatusAsync(id, statusId);
+            if (!result) return NotFound(new { message = "Không tìm thấy user" });
+            return Ok(new { message = "Cập nhật trạng thái user thành công" });
         }
 
         [HttpPut("users/{id}/role")]

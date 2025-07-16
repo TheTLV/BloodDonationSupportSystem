@@ -13,7 +13,7 @@ namespace BloodDonationSupportSystem.Services.Interfaces
         Task<bool> DeleteMyDonationAsync(int donationId, int userId);
 
         Task<IEnumerable<UserViewDTO>> GetAllUsersAsync();
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> UpdateUserStatusAsync(int userId, int newStatusId);
         Task<bool> UpdateUserRoleAsync(int userId, int newRoleId);
         Task<UserDetailDTO> GetUserDetailByIdAsync(int userId);
 

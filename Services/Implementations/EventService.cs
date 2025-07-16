@@ -31,7 +31,7 @@ namespace BloodDonationSupportSystem.Services
 
             var id = _eventRepo.CreateEvent(newEvent);
 
-            _notificationService.CreateNotification(new NotificationCreateDTO
+            _notificationService.EventCreateNotification(new EventNotificationCreateDTO
             {
                 Message = $"Sự kiện mới: {dto.Title} sẽ diễn ra vào ngày {dto.EventDate:dd/MM/yyyy}",
                 EventId = id
@@ -51,7 +51,7 @@ namespace BloodDonationSupportSystem.Services
             var success = _eventRepo.UpdateEvent(exist);
             if (success)
             {
-                _notificationService.CreateNotification(new NotificationCreateDTO
+                _notificationService.EventCreateNotification(new EventNotificationCreateDTO
                 {
                     Message = $"Sự kiện {dto.Title} đã được cập nhật (ngày {dto.EventDate:dd/MM/yyyy})",
                     EventId = id
@@ -69,7 +69,7 @@ namespace BloodDonationSupportSystem.Services
             var success = _eventRepo.DeleteEvent(id);
             if (success)
             {
-                _notificationService.CreateNotification(new NotificationCreateDTO
+                _notificationService.EventCreateNotification(new EventNotificationCreateDTO
                 {
                     Message = $"Sự kiện {ev.Title} đã bị xóa"
                 });
