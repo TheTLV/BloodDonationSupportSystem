@@ -213,6 +213,9 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("date")
                 .HasColumnName("notif_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(n => n.IsRead)
+                  .HasColumnName("is_read")
+                  .HasDefaultValue(false);
 
             entity.HasOne(d => d.Event).WithMany(p => p.Notifications)
                 .HasForeignKey(d => d.EventId)

@@ -18,7 +18,7 @@ namespace BloodDonationSupportSystem.Repositories.Interface
 
         Task<Bloodrequest?> GetRequestByIdAndUserAsync(int requestId, int userId);
         Task<Donation?> GetDonationByIdAndUserAsync(int donationId, int userId);
-        Task<bool> SaveChangesAsync(); // để gọi sau khi update/delete/add
+        Task<bool> SaveChangesAsync();
         void AddProfile(Profile profile);
         void RemoveDonation(Donation donation);
         void RemoveBloodRequest(Bloodrequest request);

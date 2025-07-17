@@ -1,5 +1,6 @@
 ﻿using BloodDonationSupportSystem.DTOs.NotificationDTOs;
 using BloodDonationSupportSystem.Models;
+using BloodDonationSupportSystem.Repositories.Implementations;
 using BloodDonationSupportSystem.Repositories.Interface;
 using BloodDonationSupportSystem.Services.Interfaces;
 
@@ -78,6 +79,25 @@ namespace BloodDonationSupportSystem.Services.Implementations
                     UserId = n.UserId
                 })
                 .ToList();
+        }
+
+        public NotificationUnreadCountDTO GetUnreadCount(int userId)
+        {
+            int count = _notificationRepo.CountUnreadByUserId(userId);
+            return new NotificationUnreadCountDTO
+            {
+                RealCount = count
+            };
+        }
+
+        public void MarkAsRead(int notificationId)
+        {
+            _notificationRepo.MarkAsRead(notificationId);
+        }
+
+        public void MarkAllAsRead(int userId)
+        {
+            _notificationRepo.MarkAllAsRead(userId); 
         }
     }
 

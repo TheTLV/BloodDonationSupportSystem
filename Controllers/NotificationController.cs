@@ -50,6 +50,35 @@ namespace BloodDonationSupportSystem.Controllers
             var list = _notificationService.GetNotificationsByUser(userId);
             return Ok(list);
         }
-    }
 
+        [HttpGet("unread-count")]
+        public IActionResult GetUnreadCount()
+        {
+            var userIdClaim = User.FindFirst("userId");
+            if (userIdClaim == null) return Unauthorized();
+
+            int userId = int.Parse(userIdClaim.Value);
+
+            var result = _notificationService.GetUnreadCount(userId);
+            return Ok(result);
+        }
+
+        [HttpPut("mark-as-read/{id}")]
+        public IActionResult MarkAsRead(int id)
+        {
+            _notificationService.MarkAsRead(id);
+            return NoContent();
+        }
+
+        [HttpPut("mark-all-as-read")]
+        public IActionResult MarkAllAsRead()
+        {
+            var userIdClaim = User.FindFirst("userId");
+            if (userIdClaim == null) return Unauthorized();
+
+            int userId = int.Parse(userIdClaim.Value);
+            _notificationService.MarkAllAsRead(userId);
+            return NoContent();
+        }
+    }
 }

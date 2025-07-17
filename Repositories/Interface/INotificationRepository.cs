@@ -9,6 +9,9 @@ namespace BloodDonationSupportSystem.Repositories.Interface
         List<Notification> GetNotificationsByUserId(int userId);
         bool DeleteNotification(int id);
         Notification? GetById(int id);
+        int CountUnreadByUserId(int userId);
+        void MarkAllAsRead(int notificationId);
+        void MarkAsRead(int notificationId);
     }
 
 }

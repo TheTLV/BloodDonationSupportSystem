@@ -46,5 +46,31 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
         {
             return _context.Notifications.FirstOrDefault(e => e.NotificationId == id);
         }
+        public int CountUnreadByUserId(int userId)
+        {
+            return _context.Notifications
+                           .Where(n => n.UserId == userId && !n.IsRead)
+                           .Count();
+        }
+        public void MarkAsRead(int notificationId)
+        {
+            var notification = _context.Notifications.Find(notificationId);
+            if (notification != null)
+            {
+                notification.IsRead = true;
+                _context.SaveChanges();
+            }
+        }
+        public void MarkAllAsRead(int userId)
+        {
+            var notifications = _context.Notifications
+                .Where(n => n.UserId == userId && !n.IsRead)
+                .ToList();
+
+            foreach (var n in notifications)
+                n.IsRead = true;
+
+            _context.SaveChanges();
+        }
     }
 }
