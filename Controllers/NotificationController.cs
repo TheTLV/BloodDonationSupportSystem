@@ -16,9 +16,18 @@ namespace BloodDonationSupportSystem.Controllers
         {
             _notificationService = notificationService;
         }
+        private int userId => GetUserIdFromToken();
+        private int GetUserIdFromToken()
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null)
+                throw new Exception("Không tìm thấy UserId trong token");
+
+            return int.Parse(userIdClaim.Value);
+        }
 
         [HttpPost("sendToUser")]
-        [Authorize(Roles = "1,2")] // 1 = Admin, 2 = Staff
+        [Authorize(Roles = "2,3")] 
         public IActionResult SendToUser([FromBody] AdminNotificationCreateDTO dto)
         {
             try
@@ -52,18 +61,15 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("unread-count")]
+        [Authorize(Roles ="1,2,3")]
         public IActionResult GetUnreadCount()
         {
-            var userIdClaim = User.FindFirst("userId");
-            if (userIdClaim == null) return Unauthorized();
-
-            int userId = int.Parse(userIdClaim.Value);
-
             var result = _notificationService.GetUnreadCount(userId);
             return Ok(result);
         }
 
         [HttpPut("mark-as-read/{id}")]
+        [Authorize(Roles = "1,2,3")]
         public IActionResult MarkAsRead(int id)
         {
             _notificationService.MarkAsRead(id);
@@ -71,14 +77,11 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpPut("mark-all-as-read")]
+        [Authorize(Roles = "1,2,3")]
         public IActionResult MarkAllAsRead()
         {
-            var userIdClaim = User.FindFirst("userId");
-            if (userIdClaim == null) return Unauthorized();
-
-            int userId = int.Parse(userIdClaim.Value);
             _notificationService.MarkAllAsRead(userId);
-            return NoContent();
+            return Ok(new { message = "Tất cả đã đọc" }); 
         }
     }
 }
