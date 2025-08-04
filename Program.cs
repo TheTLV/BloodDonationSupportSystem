@@ -90,6 +90,9 @@ namespace BloodDonationSupportSystem
             builder.Services.AddScoped<IBlogService, BlogService>();
             builder.Services.AddScoped<IDashboardService, DashboardService>();
             builder.Services.AddSingleton<JwtService>();
+            builder.Services.AddScoped<IBloodBankRepository, BloodBankRepository>();
+            builder.Services.AddScoped<IDonationEligibilityRepository, DonationEligibilityRepository>();
+
 
             // ========= CORS =========
             services.AddCors(options =>

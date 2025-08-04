@@ -13,9 +13,9 @@ public partial class Notification
 
     public string? Message { get; set; }
 
-    public DateOnly NotifDate { get; set; }
+    public DateOnly? NotifDate { get; set; }
 
-    public bool IsRead { get; set; }= false;
+    public bool IsRead { get; set; }
 
     public virtual Event? Event { get; set; }
 

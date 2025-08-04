@@ -9,8 +9,6 @@ public partial class Donation
 
     public int? UserId { get; set; }
 
-    public string? BloodGroup { get; set; }
-
     public string? Status { get; set; }
 
     public int? Quantity { get; set; }
@@ -18,12 +16,18 @@ public partial class Donation
     public DateOnly DonationDate { get; set; }
 
     public TimeOnly DonationTime { get; set; }
+
     public int? Height { get; set; }
+
     public int? Weight { get; set; }
+
     public string? ChronicDisease { get; set; }
+
     public string? Medication { get; set; }
+
     public DateOnly? LastDonationDate { get; set; }
 
+    public virtual ICollection<DonationEligibility> DonationEligibilities { get; set; } = new List<DonationEligibility>();
 
     public virtual User? User { get; set; }
 }

@@ -19,7 +19,11 @@ public partial class User
 
     public int StatusId { get; set; }
 
+    public bool? IsFirstTimeDonor { get; set; }
+
     public virtual ICollection<Bloodrequest> Bloodrequests { get; set; } = new List<Bloodrequest>();
+
+    public virtual ICollection<DonationEligibility> DonationEligibilities { get; set; } = new List<DonationEligibility>();
 
     public virtual ICollection<Donation> Donations { get; set; } = new List<Donation>();
 

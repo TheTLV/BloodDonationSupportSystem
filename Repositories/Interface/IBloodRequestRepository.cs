@@ -8,5 +8,6 @@ namespace BloodDonationSupportSystem.Repositories.Interface
         Task<Bloodrequest?> GetByIdAsync(int id);
         IQueryable<Bloodrequest> GetAll();
         Task<bool> SaveChangesAsync();
+        Task UpdateAsync(Bloodrequest request);
     }
 }

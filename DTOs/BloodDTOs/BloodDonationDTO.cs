@@ -11,7 +11,5 @@
         public string? ChronicDisease { get; set; }
         public string? Medication { get; set; }
         public DateOnly? LastDonationDate { get; set; } 
-
-
     }
 }

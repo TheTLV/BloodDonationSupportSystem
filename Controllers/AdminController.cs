@@ -1,4 +1,5 @@
 ﻿using BloodDonationSupportSystem.DTOs;
+using BloodDonationSupportSystem.DTOs.BloodDTO;
 using BloodDonationSupportSystem.Services.Implementations;
 using BloodDonationSupportSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ namespace BloodDonationSupportSystem.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "2,3")] // Admin role
+    [Authorize(Roles = "2,3,4")] // Admin role
     public class AdminController : ControllerBase
     {
         private readonly IBloodService _bloodService;
@@ -23,7 +24,7 @@ namespace BloodDonationSupportSystem.Controllers
         // ======== DONATION ========
 
         [HttpGet("donations")]
-        [Authorize(Roles = "2,3")]
+        [Authorize(Roles = "2,3,4")]
         public async Task<IActionResult> GetAllDonations()
         {
             var result = await _bloodService.GetAllDonationsForAdmin();
@@ -31,21 +32,34 @@ namespace BloodDonationSupportSystem.Controllers
         }
 
         [HttpGet("donations/search")]
-        [Authorize(Roles = "2,3")]
+        [Authorize(Roles = "2,3,4")]
         public async Task<IActionResult> SearchDonations([FromQuery] string? bloodGroup, [FromQuery] string? status)
         {
             var result = await _bloodService.SearchDonations(bloodGroup, status);
             return Ok(result);
         }
 
-        [HttpPut("donations/{id}/status")]
-        [Authorize(Roles = "2,3")]
-        public async Task<IActionResult> UpdateDonationStatus(int id, [FromBody] string newStatus)
+        [HttpPut("donations/{donationId}/status")]
+        [Authorize(Roles = "2,3,4")]
+        public async Task<IActionResult> UpdateDonationStatus(int donationId, [FromBody] DonationStatusUpdateDTO dto)
         {
-            var success = await _bloodService.UpdateDonationStatusAsync(id, newStatus);
-            if (!success) return NotFound(new { message = "Không tìm thấy donation" });
+            var (success, error) = await _bloodService.UpdateDonationStatusAsync(donationId, dto.Status);
+            if (!success) return NotFound(new { message = error ?? "Không tìm thấy donation" });
             return Ok(new { message = "Cập nhật trạng thái donation thành công" });
         }
+        //[HttpPut("donations/{id}/status")]
+        //[Authorize(Roles = "2,3,4")]
+        //public async Task<IActionResult> UpdateDonationStatus(int id, [FromBody] DonationStatusUpdateDTO dto)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    var (success, error) = await _bloodService.UpdateDonationStatusAsync(id, dto.Status);
+        //    if (!success)
+        //        return NotFound(new { message = error });
+
+        //    return Ok(new { message = "Cập nhật trạng thái donation thành công" });
+        //}
 
         // ======== REQUEST ========
 
@@ -108,6 +122,14 @@ namespace BloodDonationSupportSystem.Controllers
         {
             var users = await _userService.GetUserDetailByIdAsync(id);
             return Ok(users);
+        }
+
+        [HttpGet("bloodbank")]
+        [Authorize(Roles = "3")]
+        public async Task<IActionResult> GetBloodBankDetails()
+        {
+            var bloodBankDetails = await _bloodService.GetAllStocksAsync();
+            return Ok(bloodBankDetails);
         }
     }
 }

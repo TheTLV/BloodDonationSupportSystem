@@ -17,5 +17,7 @@ public partial class Profile
 
     public string? BloodGroup { get; set; }
 
+    public bool? IsBloodGroupVerified { get; set; }
+
     public virtual User? User { get; set; }
 }

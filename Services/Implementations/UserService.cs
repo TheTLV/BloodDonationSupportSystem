@@ -136,10 +136,18 @@ namespace BloodDonationSupportSystem.Services.Implementations
         }
 
 
+        //public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
+        //{
+        //    return await _userRepository.UpdateUserRoleAsync(userId, newRoleId);
+        //}
         public async Task<bool> UpdateUserRoleAsync(int userId, int newRoleId)
         {
+            if (newRoleId < 1 || newRoleId > 4)
+                throw new ArgumentOutOfRangeException(nameof(newRoleId), "RoleId phải nằm giữa 1 và 4.");
+
             return await _userRepository.UpdateUserRoleAsync(userId, newRoleId);
         }
+
 
         public async Task<UserDetailDTO> GetUserDetailByIdAsync(int userId)
         {

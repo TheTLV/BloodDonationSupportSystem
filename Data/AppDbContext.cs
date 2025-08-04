@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using BloodDonationSupportSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace BloodDonationSupportSystem.Data;
 
 public partial class AppDbContext : DbContext
 {
-
-
     private readonly IConfiguration _configuration;
 
     public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration configuration)
@@ -20,23 +17,16 @@ public partial class AppDbContext : DbContext
     }
 
     public virtual DbSet<AccountStatus> AccountStatuses { get; set; }
-
     public virtual DbSet<Blog> Blogs { get; set; }
-
+    public virtual DbSet<BloodBank> BloodBanks { get; set; }
     public virtual DbSet<Bloodrequest> Bloodrequests { get; set; }
-
     public virtual DbSet<Donation> Donations { get; set; }
-
+    public virtual DbSet<DonationEligibility> DonationEligibilities { get; set; }
     public virtual DbSet<Event> Events { get; set; }
-
     public virtual DbSet<Feedback> Feedbacks { get; set; }
-
     public virtual DbSet<Notification> Notifications { get; set; }
-
     public virtual DbSet<Profile> Profiles { get; set; }
-
     public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -47,6 +37,7 @@ public partial class AppDbContext : DbContext
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -88,6 +79,22 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("title");
         });
 
+        modelBuilder.Entity<BloodBank>(entity =>
+        {
+            entity.HasKey(e => e.BankId).HasName("PRIMARY");
+
+            entity.ToTable("blood_bank");
+
+            entity.Property(e => e.BankId).HasColumnName("bank_id");
+            entity.Property(e => e.BloodGroup)
+                .HasMaxLength(10)
+                .HasColumnName("blood_group");
+            entity.Property(e => e.LastUpdated).HasColumnName("last_updated");
+            entity.Property(e => e.QuantityMl)
+                .HasDefaultValueSql("'0'")
+                .HasColumnName("quantity_ml");
+        });
+
         modelBuilder.Entity<Bloodrequest>(entity =>
         {
             entity.HasKey(e => e.RequestId).HasName("PRIMARY");
@@ -124,31 +131,82 @@ public partial class AppDbContext : DbContext
             entity.HasIndex(e => e.UserId, "user_id");
 
             entity.Property(e => e.DonationId).HasColumnName("donation_id");
-            entity.Property(e => e.BloodGroup)
-                .HasMaxLength(10)
-                .HasColumnName("blood_group");
+            entity.Property(e => e.ChronicDisease)
+                .HasColumnType("text")
+                .HasColumnName("chronic_disease");
             entity.Property(e => e.DonationDate).HasColumnName("donation_date");
             entity.Property(e => e.DonationTime)
                 .HasColumnType("time")
                 .HasColumnName("donation_time");
-            entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.Height).HasColumnName("height");
-            entity.Property(e => e.Weight).HasColumnName("weight");
-            entity.Property(e => e.ChronicDisease)
-                  .HasColumnType("text")
-                  .HasColumnName("chronic_disease");
+            entity.Property(e => e.LastDonationDate).HasColumnName("last_donation_date");
             entity.Property(e => e.Medication)
-                  .HasColumnType("text")
-                  .HasColumnName("medication");
+                .HasColumnType("text")
+                .HasColumnName("medication");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
                 .HasColumnName("status");
-            entity.Property(e => e.LastDonationDate).HasColumnName("last_donation_date");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Weight).HasColumnName("weight");
 
             entity.HasOne(d => d.User).WithMany(p => p.Donations)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("donations_ibfk_1");
+        });
+
+        modelBuilder.Entity<DonationEligibility>(entity =>
+        {
+            entity.HasKey(e => e.EligibilityId).HasName("PRIMARY");
+
+            entity.ToTable("donation_eligibility");
+
+            entity.HasIndex(e => e.DonationId, "donation_id");
+            entity.HasIndex(e => e.UserId, "user_id");
+
+            entity.Property(e => e.EligibilityId).HasColumnName("eligibility_id");
+            entity.Property(e => e.BloodPressure)
+                .HasMaxLength(20)
+                .HasColumnName("blood_pressure");
+            entity.Property(e => e.DonationId).HasColumnName("donation_id");
+            entity.Property(e => e.HasChronicDisease)
+                .HasDefaultValueSql("'0'")
+                .HasColumnName("has_chronic_disease");
+            entity.Property(e => e.HasRecentMedication)
+                .HasDefaultValueSql("'0'")
+                .HasColumnName("has_recent_medication");
+            entity.Property(e => e.HemoglobinLevel).HasColumnName("hemoglobin_level");
+            entity.Property(e => e.HepatitisB).HasColumnName("hepatitis_b");
+            entity.Property(e => e.HepatitisC).HasColumnName("hepatitis_c");
+            entity.Property(e => e.HivTestResult).HasColumnName("hiv_test_result");
+            entity.Property(e => e.Notes)
+                .HasColumnType("text")
+                .HasColumnName("notes");
+            entity.Property(e => e.ScreeningDate).HasColumnName("screening_date");
+            entity.Property(e => e.Syphilis).HasColumnName("syphilis");
+            entity.Property(e => e.TemperatureC).HasColumnName("temperature_c");
+            entity.Property(e => e.HeartRateBpm).HasColumnName("heart_rate_bpm");
+            entity.Property(e => e.CurrentHealthStatus)
+                .HasColumnType("varchar")
+                .HasColumnName("current_health_status");
+            entity.Property(e => e.MedicalHistory)
+                .HasColumnType("varchar")
+                .HasColumnName("medical_history");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasColumnName("status")
+                .IsRequired(false);
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Donation).WithMany(p => p.DonationEligibilities)
+                .HasForeignKey(d => d.DonationId)
+                .HasConstraintName("donation_eligibility_ibfk_2");
+
+            entity.HasOne(d => d.User).WithMany(p => p.DonationEligibilities)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("donation_eligibility_ibfk_1");
         });
 
         modelBuilder.Entity<Event>(entity =>
@@ -201,7 +259,6 @@ public partial class AppDbContext : DbContext
             entity.ToTable("notifications");
 
             entity.HasIndex(e => e.UserId, "notifications_ibfk_1");
-
             entity.HasIndex(e => e.EventId, "notifications_ibfk_2");
 
             entity.Property(e => e.NotificationId).HasColumnName("notification_id");
@@ -235,7 +292,7 @@ public partial class AppDbContext : DbContext
             entity.ToTable("profiles");
 
             entity.HasIndex(e => e.UserId, "user_id").IsUnique();
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+
             entity.Property(e => e.ProfileId).HasColumnName("profile_id");
             entity.Property(e => e.Address)
                 .HasColumnType("text")
@@ -243,11 +300,14 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.BloodGroup)
                 .HasMaxLength(10)
                 .HasColumnName("blood_group");
-            entity.Property(e => e.DateOfBirth)
-                .HasColumnName("date_of_birth");
+            entity.Property(e => e.DateOfBirth).HasColumnName("date_of_birth");
             entity.Property(e => e.Gender)
                 .HasMaxLength(20)
                 .HasColumnName("gender");
+            entity.Property(e => e.IsBloodGroupVerified)
+                .HasDefaultValueSql("'0'")
+                .HasColumnName("is_blood_group_verified");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithOne(p => p.Profile)
                 .HasForeignKey<Profile>(d => d.UserId)
@@ -273,11 +333,8 @@ public partial class AppDbContext : DbContext
             entity.ToTable("users");
 
             entity.HasIndex(e => e.Email, "email").IsUnique();
-
             entity.HasIndex(e => e.StatusId, "fk_users_status");
-
             entity.HasIndex(e => e.PhoneNumber, "phoneNumber_UNIQUE").IsUnique();
-
             entity.HasIndex(e => e.RoleId, "role_id");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -287,6 +344,9 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Fullname)
                 .HasMaxLength(100)
                 .HasColumnName("fullname");
+            entity.Property(e => e.IsFirstTimeDonor)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("is_first_time_donor");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .HasColumnName("password");

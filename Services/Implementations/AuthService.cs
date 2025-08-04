@@ -39,8 +39,6 @@ namespace BloodDonationSupportSystem.Services.Implementations
             return user;
         }
 
-
-
         public async Task<User> Register(UserRegisterDTO dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Email))

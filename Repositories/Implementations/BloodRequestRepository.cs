@@ -13,5 +13,10 @@ namespace BloodDonationSupportSystem.Repositories.Implementations
         public async Task<Bloodrequest?> GetByIdAsync(int id) => await _context.Bloodrequests.FindAsync(id);
         public IQueryable<Bloodrequest> GetAll() => _context.Bloodrequests.AsQueryable();
         public async Task<bool> SaveChangesAsync() => await _context.SaveChangesAsync() > 0;
+        public async Task UpdateAsync(Bloodrequest request)
+        {
+            _context.Bloodrequests.Update(request);
+            await _context.SaveChangesAsync();
+        }
     }
 }

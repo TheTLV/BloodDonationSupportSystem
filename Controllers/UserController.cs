@@ -156,7 +156,12 @@ namespace BloodDonationSupportSystem.Controllers
             }
         }
 
-
+        [HttpGet("doctor-note/{donationId}")]
+        public async Task<IActionResult> GetDoctorNotes(int donationId)
+        {
+            var notes = await _bloodService.GetDoctorNotesAsync(donationId);
+            return Ok(notes);
+        }
 
 
 
